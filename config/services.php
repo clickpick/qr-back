@@ -30,6 +30,13 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    // socialite
+    'vkontakte' => [
+        'client_id' => env('VKONTAKTE_ADMIN_KEY'),
+        'client_secret' => env('VKONTAKTE_ADMIN_SECRET'),
+        'redirect' => env('VKONTAKTE_REDIRECT_URI')
+    ],
+
 
     'vk' => [
         'app' => [

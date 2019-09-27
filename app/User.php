@@ -124,4 +124,21 @@ class User extends Authenticatable
 
         $this->save();
     }
+
+    /**
+     * @param $vkId
+     * @return User
+     */
+    public static function getByVkId($vkId) : ?self {
+
+        if (!$vkId) {
+            return null;
+        }
+
+        return self::firstOrCreate(['vk_user_id' => $vkId]);
+    }
+
+    public function isAdmin() {
+        return $this->is_admin;
+    }
 }

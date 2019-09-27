@@ -11,6 +11,13 @@
 |
 */
 
+Route::get('login', 'Admin\LoginController@redirectToProvider')->name('login');
+Route::get('callback-auth', 'Admin\LoginController@handleProviderCallback');
+
+Route::prefix('admin')->middleware('auth')->group(function() {
+    Route::get('/', 'Admin\HomeController@index');
+});
+
 Route::get('/', function () {
     return view('welcome');
 });
