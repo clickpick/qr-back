@@ -1,4 +1,4 @@
-window._ = require('lodash');
+window._ = require("lodash");
 
 /**
  * We'll load the axios HTTP library which allows us to easily issue requests
@@ -6,9 +6,9 @@ window._ = require('lodash');
  * CSRF token as a header based on the value of the "XSRF" token cookie.
  */
 
-window.axios = require('axios');
+window.axios = require("axios");
 
-window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+window.axios.defaults.headers.common["X-Requested-With"] = "XMLHttpRequest";
 
 /**
  * Echo exposes an expressive API for subscribing to channels and listening
@@ -26,3 +26,12 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 //     cluster: process.env.MIX_PUSHER_APP_CLUSTER,
 //     encrypted: true
 // });
+
+import "balm-ui/src/styles/balm-ui.scss";
+
+import Vue from "vue";
+import BalmUI from "balm-ui";
+import BalmUIPlus from "balm-ui/dist/balm-ui-plus";
+
+Vue.use(BalmUI);
+Vue.use(BalmUIPlus);

@@ -19,5 +19,5 @@ Route::prefix('admin')->middleware('auth')->group(function() {
 });
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('index');
 });
