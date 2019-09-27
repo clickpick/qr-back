@@ -33,6 +33,8 @@ class CreateUsersTable extends Migration
 
             $table->dateTime('visited_at')->nullable();
 
+            $table->boolean('is_admin')->default(false);
+
             $table->timestamps();
         });
     }

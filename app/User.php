@@ -47,6 +47,8 @@ use Spatie\Regex\Regex;
  * @method static Builder|User whereVkUserId($value)
  * @property int $sex
  * @method static Builder|User whereSex($value)
+ * @property bool $is_admin
+ * @method static Builder|User whereIsAdmin($value)
  */
 class User extends Authenticatable
 {
