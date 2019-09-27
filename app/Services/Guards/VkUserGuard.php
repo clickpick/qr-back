@@ -56,7 +56,7 @@ class VkUserGuard {
         $sign_params_query = http_build_query($usefulParams->toArray());
         /* Получаем хеш-код от строки, используя защищеный ключ приложения. Генерация на основе метода HMAC. */
         $sign = rtrim(strtr(base64_encode(hash_hmac(
-            'sha256', $sign_params_query, config('vk.app.secret'), true
+            'sha256', $sign_params_query, config('services.vk.app.secret'), true
         )), '+/', '-_'), '=');
 
         if (!($sign === $params['sign'])) {
