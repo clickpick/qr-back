@@ -29,7 +29,7 @@ class ProjectController extends Controller
         $projectKeyIdToActivate = DB::table('project_key_user')
             ->where('project_keys.project_id', $project->id)
             ->where('project_key_user.token', $request->token)
-            ->select(['project_key_user.project_key_id', 'project_key_user.user_id'])
+            ->select(['project_keys.id as project_key_id', 'project_key_user.project_key_id', 'project_key_user.user_id'])
             ->join('project_keys', 'project_key_user.project_key_id', '=', 'project_keys.id')
             ->first();
 
@@ -40,6 +40,12 @@ class ProjectController extends Controller
         $user = Auth::user();
 
         if ($projectKeyIdToActivate->user_id === $user->id) {
+            abort(404);
+        }
+
+        $userActivatedKeys = $user->activatedProjectKeys;
+
+        if ($userActivatedKeys->contains('id', $projectKeyIdToActivate->project_key_id)) {
             abort(422);
         }
 
