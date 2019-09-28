@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Events\UserCreated;
 use App\Services\VkClient;
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
@@ -68,6 +69,10 @@ class User extends Authenticatable
         'notifications_are_enabled',
         'messages_are_enabled',
         'visited_at'
+    ];
+
+    protected $dispatchesEvents = [
+        'created' => UserCreated::class
     ];
 
     /**
