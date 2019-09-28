@@ -10,6 +10,10 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
+use Spatie\Image\Manipulations;
+use Spatie\MediaLibrary\HasMedia\HasMedia;
+use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
+use Spatie\MediaLibrary\Models\Media;
 
 /**
  * App\Project
@@ -43,8 +47,10 @@ use Illuminate\Support\Str;
  * @property-read Collection|ProjectFact[] $projectFacts
  * @property-read int|null $project_facts_count
  */
-class Project extends Model
+class Project extends Model implements HasMedia
 {
+    use HasMediaTrait;
+
     protected $fillable = [
         'name',
         'description',
@@ -65,6 +71,25 @@ class Project extends Model
 
     public function projectFacts() {
         return $this->hasMany(ProjectFact::class);
+    }
+
+    public function registerMediaCollections()
+    {
+        $this->addMediaCollection('poster')
+            ->singleFile()
+            ->registerMediaConversions(function (Media $media) {
+                $this
+                    ->addMediaConversion('card')
+                    ->crop(Manipulations::CROP_TOP, 50 * 3, 50 * 3);
+            });
+
+        $this->addMediaCollection('banner')
+            ->singleFile()
+            ->registerMediaConversions(function (Media $media) {
+                $this
+                    ->addMediaConversion('card')
+                    ->crop(Manipulations::CROP_TOP, 335 * 3, 138 * 3);
+            });
     }
 
     public function generateProjectKeys($count = 5) {

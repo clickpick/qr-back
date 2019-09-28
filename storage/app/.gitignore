@@ -1,3 +1,5 @@
 *
 !public/
+!seed/
+!seed/*
 !.gitignore
