@@ -10,6 +10,7 @@ use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Notifications\DatabaseNotificationCollection;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Str;
 use Spatie\Regex\Regex;
 
 /**
@@ -49,6 +50,8 @@ use Spatie\Regex\Regex;
  * @method static Builder|User whereSex($value)
  * @property bool $is_admin
  * @method static Builder|User whereIsAdmin($value)
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\ProjectKey[] $projectKeys
+ * @property-read int|null $project_keys_count
  */
 class User extends Authenticatable
 {
@@ -84,6 +87,14 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function projectKeys() {
+        return $this->belongsToMany(ProjectKey::class)->withPivot('token');
+    }
+
+    public function activatedProjectKeys() {
+        return $this->belongsToMany(ProjectKey::class, 'activated_project_key_user');
+    }
 
 
     public function fillPersonalInfoFromVk($data = null) {
@@ -140,5 +151,20 @@ class User extends Authenticatable
 
     public function isAdmin() {
         return $this->is_admin;
+    }
+
+
+    public function getProjectKeyForProject(Project $project) {
+        if ($this->projectKeys()->where('project_id', $project->id)->exists()) {
+            return $this->projectKeys()->where('project_id', $project->id)->first();
+        }
+
+        $randomProductKey = $project->getRandomProjectKey();
+
+        $this->projectKeys()->sync([$randomProductKey->id => [
+            'token' => Str::random()
+        ]]);
+
+        return $randomProductKey;
     }
 }
