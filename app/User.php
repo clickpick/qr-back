@@ -6,6 +6,7 @@ use App\Events\UserCreated;
 use App\Services\VkClient;
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Notifications\DatabaseNotificationCollection;
@@ -51,8 +52,10 @@ use Spatie\Regex\Regex;
  * @method static Builder|User whereSex($value)
  * @property bool $is_admin
  * @method static Builder|User whereIsAdmin($value)
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\ProjectKey[] $projectKeys
+ * @property-read Collection|ProjectKey[] $projectKeys
  * @property-read int|null $project_keys_count
+ * @property-read Collection|ProjectKey[] $activatedProjectKeys
+ * @property-read int|null $activated_project_keys_count
  */
 class User extends Authenticatable
 {

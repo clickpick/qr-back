@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ActivateProjectKeyRequest;
+use App\Http\Resources\ProjectFactResource;
 use App\Http\Resources\ProjectKeyResource;
 use App\Http\Resources\ProjectKeyTokenResource;
 use App\Http\Resources\ProjectResource;
@@ -67,5 +68,11 @@ class ProjectController extends Controller
         $activatedKeys = ProjectKey::whereIn('id', $activatedIds)->get();
 
         return ProjectKeyResource::collection($activatedKeys);
+    }
+
+    public function getFacts(Project $project) {
+        $facts = $project->projectFacts;
+
+        return ProjectFactResource::collection($facts);
     }
 }

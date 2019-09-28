@@ -40,6 +40,8 @@ use Illuminate\Support\Str;
  * @mixin Eloquent
  * @property-read Collection|ProjectKey[] $projectKeys
  * @property-read int|null $project_keys_count
+ * @property-read Collection|ProjectFact[] $projectFacts
+ * @property-read int|null $project_facts_count
  */
 class Project extends Model
 {
@@ -59,6 +61,10 @@ class Project extends Model
 
     public function projectKeys() {
         return $this->hasMany(ProjectKey::class);
+    }
+
+    public function projectFacts() {
+        return $this->hasMany(ProjectFact::class);
     }
 
     public function generateProjectKeys($count = 5) {
