@@ -43,5 +43,16 @@ import BalmUIPlus from "balm-ui/dist/balm-ui-plus";
 Vue.use(BalmUI);
 Vue.use(BalmUIPlus);
 
+import { extend, ValidationProvider } from "vee-validate";
+import * as rules from "vee-validate/dist/rules";
+import ru from "vee-validate/dist/locale/ru";
 
+// loop over all rules
+for (const rule in rules) {
+  extend(rule, {
+    ...rules[rule], // add the rule
+    message: ru.messages[rule] // add its message
+  });
+}
 
+Vue.component("v-provider", ValidationProvider);
