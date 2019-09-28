@@ -1,40 +1,27 @@
 <template>
-  <div>
-    <ui-top-app-bar fixed content-selector=".demo-main" nav-id="demo-menu">Temporary Drawer</ui-top-app-bar>
-
-    <ui-modal-drawer menu-selector="#demo-menu">
+  <div class="balmui-container balmui-container--flex">
+    <ui-permanent-drawer menu-selector="#menu">
       <ui-drawer-header>
         <ui-drawer-title>{{ title }}</ui-drawer-title>
         <ui-drawer-subtitle>{{ subtitle }}</ui-drawer-subtitle>
       </ui-drawer-header>
       <ui-drawer-content>
-        <ui-list-nav>
-          <ui-item-a first-icon="arrow_back" @click.native="() => { $router.back(); }">Back</ui-item-a>
-          <ui-list-divider></ui-list-divider>
-          <template v-for="(item, index) in menu">
-            <ui-list-divider v-if="item === '-'" :key="`divider-${index}`"></ui-list-divider>
-            <template v-else>
-              <ui-list-group-subheader
-                v-if="item.subheader"
-                :key="`subheader-${index}`"
-              >{{ item.subheader }}</ui-list-group-subheader>
-              <ui-item-a
-                v-for="(subItem, subIndex) in item.items"
-                :key="`item-${index}-${subIndex}`"
-                :first-icon="subItem.icon"
-              >{{ subItem.name }}</ui-item-a>
-            </template>
-          </template>
-        </ui-list-nav>
+        <ui-list-nav></ui-list-nav>
       </ui-drawer-content>
-    </ui-modal-drawer>
+    </ui-permanent-drawer>
 
-    <ui-drawer-scrim />
-
-    <main :class="[$tt('body1'), 'demo-main']">
+    <main :class="[$tt('body1'), 'main']">
+      <ui-top-app-bar content-selector=".main" nav-id="menu" id="menu" fixed>
+        <template #nav-icon>
+          <ui-icon @click="$router.back()">arrow_back</ui-icon>
+        </template>
+        Temporary Drawer
+      </ui-top-app-bar>
       <div :class="$tt('body2')">
-        <h1 :class="$tt('headline4')">Temporary Drawer</h1>
-        <p>Click the menu icon above to open.</p>
+        <h3 :class="$tt('headline6')">Текущий проект</h3>
+        <ui-table :data="[all.data[0]]" :thead="all.thead" :tbody="all.tbody" fullwidth></ui-table>
+        <h3 :class="$tt('headline6')">Все проекты</h3>
+        <ui-table :data="all.data" :thead="all.thead" :tbody="all.tbody" fullwidth></ui-table>
       </div>
     </main>
   </div>
@@ -42,11 +29,48 @@
 
 <script>
 export default {
-  name: "app",
+  name: "v-app",
   data() {
     return {
       title: "Mail",
       subtitle: "ui@balmjs.com",
+      all: {
+        data: [
+          {
+            id: 1,
+            dessert: "Frozen yogurt",
+            calories: 159,
+            fat: 6,
+            carbs: 24,
+            protein: 4
+          },
+          {
+            id: 2,
+            dessert: "Ice cream sandwich",
+            calories: 237,
+            fat: 9,
+            carbs: 37,
+            protein: 4.3
+          },
+          {
+            id: 3,
+            dessert: "Eclair",
+            calories: 262,
+            fat: 16,
+            carbs: 24,
+            protein: 6
+          }
+        ],
+        thead: [
+          "ID",
+          "Dessert (100g serving)",
+          "Calories",
+          "Fat (g)",
+          "Carbs (g)",
+          "Protein (g)"
+        ],
+        tbody: ["id", "dessert", "calories", "fat", "carbs", "protein"]
+      },
       menu: [
         {
           items: [
@@ -106,4 +130,21 @@ export default {
 </script>
 
 <style>
+.main {
+  position: relative;
+  flex-grow: 1;
+}
+
+.main .mdc-top-app-bar--fixed {
+  top: 0;
+}
+
+.main .mdc-typography--body2 {
+  padding: 16px;
+}
+
+.balmui-container--flex {
+  display: flex;
+  height: 100vh;
+}
 </style>

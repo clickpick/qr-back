@@ -27,11 +27,16 @@ window.axios.defaults.headers.common["X-Requested-With"] = "XMLHttpRequest";
 //     encrypted: true
 // });
 
-import "balm-ui/src/styles/balm-ui.scss";
-
 import Vue from "vue";
+
 import BalmUI from "balm-ui";
 import BalmUIPlus from "balm-ui/dist/balm-ui-plus";
 
 Vue.use(BalmUI);
 Vue.use(BalmUIPlus);
+
+import App from "./components/app.vue";
+
+Vue.component("v-app", App);
+
+
