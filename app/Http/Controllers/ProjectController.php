@@ -54,11 +54,11 @@ class ProjectController extends Controller
     public function getUserActivatedProjectKeys(Project $project) {
         $user = Auth::user();
 
-        $activatedIds = $projectKeyIdToActivate = DB::table('project_key_user')
+        $activatedIds = DB::table('activated_project_key_user')
             ->where('project_keys.project_id', $project->id)
-            ->where('project_key_user.user_id', $user->id)
-            ->select('project_key_user.project_key_id')
-            ->join('project_keys', 'project_key_user.project_key_id', '=', 'project_keys.id')
+            ->where('activated_project_key_user.user_id', $user->id)
+            ->select('activated_project_key_user.project_key_id')
+            ->join('project_keys', 'activated_project_key_user.project_key_id', '=', 'project_keys.id')
             ->get()
             ->map(function($item) {
                 return $item->project_key_id;
