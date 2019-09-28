@@ -170,6 +170,6 @@ class User extends Authenticatable
             'token' => Str::random()
         ]]);
 
-        return $randomProductKey;
+        return $this->projectKeys()->where('project_id', $project->id)->first();
     }
 }
