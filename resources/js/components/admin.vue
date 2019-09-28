@@ -9,25 +9,23 @@
       </ui-top-app-bar>
       <div :class="$tt('body2')">
         <h3 :class="$tt('headline6')">Текущий проект</h3>
-        <ui-table
-          :data="[projects.data[0]]"
-          :thead="projects.head"
-          :tbody="projects.schema"
-          fullwidth
-        ></ui-table>
+        <ui-table :data="current" :thead="projects.head" :tbody="projects.schema" fullwidth></ui-table>
         <h3 :class="$tt('headline6')">Все проекты</h3>
         <ui-table :data="projects.data" :thead="projects.head" :tbody="projects.schema" fullwidth></ui-table>
       </div>
     </main>
     <ui-dialog :open="open" @confirm="onUpdateProject">
       <ui-dialog-title>Изменение заявки</ui-dialog-title>
-      <ui-dialog-content>Контент</ui-dialog-content>
+      <ui-dialog-content>
+        <v-fields :project="edit" />
+      </ui-dialog-content>
       <ui-dialog-actions />
     </ui-dialog>
   </div>
 </template>
 
 <script>
+import { reactive as project } from "../model/project";
 import { default as EventBus } from "vue";
 
 export default {
@@ -35,7 +33,16 @@ export default {
   data() {
     return {
       open: null,
-      current: -1,
+      edit: project,
+      current: {
+        id: 1,
+        name: "WWF",
+        desc: "Амурский тигр",
+        donate: 2387000,
+        prize: "Стикеры VK fest",
+        link: "https://wwf.ru/help/projects/fight-for-the-amur-tiger",
+        contact: "https://vk.com/chingis_balbarov"
+      },
       projects: {
         data: [
           {
@@ -90,7 +97,7 @@ export default {
 
     this.bus.$on("row.click", (id) => {
       if (id >= 0 && id < this.projects.data.length) {
-        this.current = id;
+        this.edit = this.projects.data[id];
         this.open = true;
       }
     });
@@ -105,10 +112,7 @@ export default {
       this.open = false;
 
       if (result) {
-        this.$axios.post("test", {
-          id: this.current,
-          chlen: "zalupa"
-        });
+        this.$axios.post("test", this.edit);
       }
     }
   }
