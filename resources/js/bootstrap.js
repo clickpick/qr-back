@@ -10,6 +10,12 @@ window.axios = require("axios");
 
 window.axios.defaults.headers.common["X-Requested-With"] = "XMLHttpRequest";
 
+const BootstrapToProto = {
+  install(Vue) {
+    Vue.prototype.$axios = window.axios;
+  }
+};
+
 /**
  * Echo exposes an expressive API for subscribing to channels and listening
  * for events that are broadcast by Laravel. Echo and event broadcasting
@@ -29,14 +35,13 @@ window.axios.defaults.headers.common["X-Requested-With"] = "XMLHttpRequest";
 
 import Vue from "vue";
 
+Vue.use(BootstrapToProto);
+
 import BalmUI from "balm-ui";
 import BalmUIPlus from "balm-ui/dist/balm-ui-plus";
 
 Vue.use(BalmUI);
 Vue.use(BalmUIPlus);
 
-import App from "./components/app.vue";
-
-Vue.component("v-app", App);
 
 
