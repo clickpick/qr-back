@@ -4,7 +4,7 @@
       <form @submit.prevent="submit">
         <h1 :class="$tt('headline5')">Подать заявку</h1>
 
-        <v-fields :project="project" />
+        <v-fields :project="project" ref="fields" />
 
         <ui-button type="submit" raised>Отправить</ui-button>
       </form>
@@ -24,7 +24,7 @@ export default {
   },
   methods: {
     submit() {
-      this.$axios.post("test", this.project);
+      this.$axios.post("test", this.$refs.fields.get());
     }
   }
 }

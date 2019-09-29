@@ -56,3 +56,8 @@ for (const rule in rules) {
 }
 
 Vue.component("v-provider", ValidationProvider);
+
+import Fields from "./components/fields.vue";
+
+Vue.component("v-fields", Fields);
+

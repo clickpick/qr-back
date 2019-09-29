@@ -17,7 +17,7 @@
     <ui-dialog :open="open" @confirm="onUpdateProject">
       <ui-dialog-title>Изменение заявки</ui-dialog-title>
       <ui-dialog-content>
-        <v-fields :project="edit" />
+        <v-fields :project="project" ref="fields" />
       </ui-dialog-content>
       <ui-dialog-actions />
     </ui-dialog>
@@ -33,7 +33,7 @@ export default {
   data() {
     return {
       open: null,
-      edit: project,
+      project,
       current: {
         id: 1,
         name: "WWF",
@@ -97,7 +97,7 @@ export default {
 
     this.bus.$on("row.click", (id) => {
       if (id >= 0 && id < this.projects.data.length) {
-        this.edit = this.projects.data[id];
+        this.project = this.projects.data[id];
         this.open = true;
       }
     });
@@ -112,7 +112,7 @@ export default {
       this.open = false;
 
       if (result) {
-        this.$axios.post("test", this.edit);
+        this.$axios.post("test", this.$refs.fields.get());
       }
     }
   }
