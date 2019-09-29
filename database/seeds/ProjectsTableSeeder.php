@@ -27,7 +27,7 @@ class ProjectsTableSeeder extends Seeder
             'is_active' => true
         ]);
 
-        $project->addMedia(storage_path('app/seed/panda.png'))->toMediaCollection('poster');
-        $project->addMedia(storage_path('app/seed/banner.png'))->toMediaCollection('banner');
+        $project->addMedia(storage_path('app/seed/panda.png'))->preservingOriginal()->toMediaCollection('poster');
+        $project->addMedia(storage_path('app/seed/banner.png'))->preservingOriginal()->toMediaCollection('banner');
     }
 }
