@@ -9,6 +9,7 @@ use Illuminate\Foundation\Http\FormRequest;
  * @package App\Http\Requests
  * @property $name
  * @property $description
+ * @property $big_description
  * @property $raised_funds
  * @property $goal_funds
  * @property $prize
@@ -38,6 +39,7 @@ class StoreProjectRequest extends FormRequest
         return [
             'name' => 'required|string|max:255',
             'description' => 'required|string',
+            'big_description' => 'nullable|string',
             'raised_funds' => 'nullable|numeric',
             'goal_funds' => 'nullable|numeric',
             'prize' => 'required|string|max:255',

@@ -11,6 +11,7 @@ use Illuminate\Validation\Rule;
  * @package App\Http\Requests
  * @property $name
  * @property $description
+ * @property $big_description
  * @property $raised_funds
  * @property $goal_funds
  * @property $prize
@@ -41,6 +42,7 @@ class UpdateProjectRequest extends FormRequest
         return [
             'name' => 'nullable|string|max:255',
             'description' => 'nullable|string',
+            'big_description' => 'nullable|string',
             'raised_funds' => 'nullable|numeric',
             'goal_funds' => 'nullable|numeric',
             'prize' => 'nullable|string|max:255',
