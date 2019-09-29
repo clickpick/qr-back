@@ -1,8 +1,10 @@
 export const reactive = {
   name: null,
-  desc: null,
+  description: null,
   donate: null,
   prize: null,
   link: null,
-  contact: null
+  contact: null,
+  banner: null,
+  poster: null
 };

@@ -15,41 +15,43 @@
       >{{ errors[0] }}</ui-textfield-helptext>
     </v-provider>
 
-    <v-provider name="desc" rules="required" v-slot="{ errors }" class="field">
+    <v-provider name="description" rules="required" v-slot="{ errors }" class="field">
       <ui-textfield
         outlined
         type="textarea"
-        id="desc"
-        v-model="$_project.desc"
+        id="description"
+        v-model="$_project.description"
         :required="true"
-        helptextId="desc-helper"
+        helptextId="description-helper"
       >Описание проекта</ui-textfield>
       <ui-textfield-helptext
         v-if="errors && errors.length"
-        id="desc-helper"
+        id="description-helper"
         :visible="true"
       >{{ errors[0] }}</ui-textfield-helptext>
     </v-provider>
 
-    <v-provider
-      name="donate"
-      rules="required|numeric|min_value:0"
-      v-slot="{ errors }"
-      class="field"
-    >
-      <ui-textfield
-        outlined
-        id="donate"
-        v-model="$_project.donate"
-        :required="true"
-        helptextId="donate-helper"
-      >Сколько нужно собрать (в рублях)</ui-textfield>
-      <ui-textfield-helptext
-        v-if="errors && errors.length"
-        id="donate-helper"
-        :visible="true"
-      >{{ errors[0] }}</ui-textfield-helptext>
-    </v-provider>
+    <template v-if="additional">
+      <v-provider
+        name="donate"
+        rules="required|numeric|min_value:0"
+        v-slot="{ errors }"
+        class="field"
+      >
+        <ui-textfield
+          outlined
+          id="donate"
+          v-model="$_project.donate"
+          :required="false"
+          helptextId="donate-helper"
+        >Сколько нужно собрать (в рублях)</ui-textfield>
+        <ui-textfield-helptext
+          v-if="errors && errors.length"
+          id="donate-helper"
+          :visible="true"
+        >{{ errors[0] }}</ui-textfield-helptext>
+      </v-provider>
+    </template>
 
     <v-provider name="prize" rules="required" v-slot="{ errors }" class="field">
       <ui-textfield
@@ -66,20 +68,22 @@
       >{{ errors[0] }}</ui-textfield-helptext>
     </v-provider>
 
-    <v-provider name="link" rules="required" v-slot="{ errors }" class="field">
-      <ui-textfield
-        outlined
-        id="link"
-        v-model="$_project.link"
-        :required="true"
-        helptextId="link-helper"
-      >Ссылка на проект</ui-textfield>
-      <ui-textfield-helptext
-        v-if="errors && errors.length"
-        id="link-helper"
-        :visible="true"
-      >{{ errors[0] }}</ui-textfield-helptext>
-    </v-provider>
+    <template v-if="additional">
+      <v-provider name="link" rules="required" v-slot="{ errors }" class="field">
+        <ui-textfield
+          outlined
+          id="link"
+          v-model="$_project.link"
+          :required="false"
+          helptextId="link-helper"
+        >Ссылка на проект</ui-textfield>
+        <ui-textfield-helptext
+          v-if="errors && errors.length"
+          id="link-helper"
+          :visible="true"
+        >{{ errors[0] }}</ui-textfield-helptext>
+      </v-provider>
+    </template>
 
     <v-provider name="contact" rules="required" v-slot="{ errors }" class="field">
       <ui-textfield
@@ -103,6 +107,10 @@
 export default {
   name: "v-fields",
   props: {
+    additional: {
+      type: Boolean,
+      default: false
+    },
     project: {
       required: true
     }
@@ -127,6 +135,12 @@ export default {
 </script>
 
 <style>
+fieldset {
+  padding: 0;
+  margin: 0;
+  border: 0;
+}
+
 .field {
   display: block;
   margin: 8px 0;
