@@ -16,6 +16,10 @@ Route::get('callback-auth', 'Admin\LoginController@handleProviderCallback');
 
 Route::prefix('admin')->middleware('auth')->group(function() {
     Route::get('/', 'Admin\HomeController@index');
+
+    Route::prefix('api')->group(function() {
+        Route::apiResource('projects', 'Admin\ProjectController');
+    });
 });
 
 Route::get('/', function () {
