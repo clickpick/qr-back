@@ -193,4 +193,9 @@ class Project extends Model implements HasMedia
             $this->save();
         });
     }
+
+    public function addFunds($value) {
+        $this->raised_funds += $value;
+        $this->save();
+    }
 }

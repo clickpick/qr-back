@@ -8,6 +8,8 @@ Route::get('projects/{project}/activated-project-keys', 'ProjectController@getUs
 Route::post('projects/{project}/activate-project-key', 'ProjectController@activateProjectKey');
 Route::get('projects/{project}/project-facts', 'ProjectController@getFacts');
 
+Route::post('projects/{project}/add-funds', 'ProjectController@addFunds');
+
 Route::get('active-project', 'ProjectController@getActive');
 
 Route::post('notifications', 'MeController@setNotificationsAreEnabled');

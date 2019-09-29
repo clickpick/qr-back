@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Events\ProjectKeyActivated;
 use App\Http\Requests\ActivateProjectKeyRequest;
+use App\Http\Requests\AddFundsRequest;
 use App\Http\Resources\ProjectFactResource;
 use App\Http\Resources\ProjectKeyResource;
 use App\Http\Resources\ProjectKeyTokenResource;
@@ -88,5 +89,19 @@ class ProjectController extends Controller
         $facts = $project->projectFacts;
 
         return ProjectFactResource::collection($facts);
+    }
+
+    /**
+     * TODO: remove after connecting pay-to-service, for demonstration only
+     *
+     * @param AddFundsRequest $request
+     * @param Project $project
+     *
+     * @return ProjectResource
+     */
+    public function addFunds(AddFundsRequest $request, Project $project) {
+        $project->addFunds($request->value);
+
+        return new ProjectResource($project);
     }
 }
