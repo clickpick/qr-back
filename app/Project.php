@@ -59,6 +59,8 @@ use Spatie\MediaLibrary\Models\Media;
  * @property string|null $contact
  * @method static Builder|Project whereContact($value)
  * @method static Builder|Project whereLink($value)
+ * @property string|null $big_description
+ * @method static Builder|Project whereBigDescription($value)
  */
 class Project extends Model implements HasMedia
 {
