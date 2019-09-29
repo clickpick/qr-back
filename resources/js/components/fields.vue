@@ -4,7 +4,7 @@
       <ui-textfield
         outlined
         id="name"
-        v-model="project.name"
+        v-model="$_project.name"
         :required="true"
         helptextId="name-helper"
       >Название проекта</ui-textfield>
@@ -20,7 +20,7 @@
         outlined
         type="textarea"
         id="desc"
-        v-model="project.desc"
+        v-model="$_project.desc"
         :required="true"
         helptextId="desc-helper"
       >Описание проекта</ui-textfield>
@@ -40,7 +40,7 @@
       <ui-textfield
         outlined
         id="donate"
-        v-model="project.donate"
+        v-model="$_project.donate"
         :required="true"
         helptextId="donate-helper"
       >Сколько нужно собрать (в рублях)</ui-textfield>
@@ -55,7 +55,7 @@
       <ui-textfield
         outlined
         id="prize"
-        v-model="project.prize"
+        v-model="$_project.prize"
         :required="true"
         helptextId="prize-helper"
       >Приз за победу в проекте</ui-textfield>
@@ -70,7 +70,7 @@
       <ui-textfield
         outlined
         id="link"
-        v-model="project.link"
+        v-model="$_project.link"
         :required="true"
         helptextId="link-helper"
       >Ссылка на проект</ui-textfield>
@@ -86,7 +86,7 @@
         outlined
         type="textarea"
         id="contact"
-        v-model="project.contact"
+        v-model="$_project.contact"
         :required="true"
         helptextId="contact-helper"
       >Контакты для связи</ui-textfield>
@@ -105,6 +105,22 @@ export default {
   props: {
     project: {
       required: true
+    }
+  },
+  created() {
+    this.$_project = this.project;
+  },
+  watch: {
+    project: {
+      deep: true,
+      handler(val) {
+        this.$_project = { ...this.$_project, ...val };
+      }
+    }
+  },
+  methods: {
+    get() {
+      return this.$_project;
     }
   }
 }
