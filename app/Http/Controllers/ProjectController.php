@@ -45,13 +45,14 @@ class ProjectController extends Controller
 
         $userActivatedKeys = $user->activatedProjectKeys;
 
-        if ($userActivatedKeys->contains('id', $projectKeyIdToActivate->project_key_id)) {
-            abort(422);
-        }
-
         $projectKeyIdToActivate = $projectKeyIdToActivate->project_key_id;
 
         $projectKey = ProjectKey::find($projectKeyIdToActivate);
+
+        if ($userActivatedKeys->contains('id', $projectKeyIdToActivate)) {
+            return response(['data' => new ProjectKeyResource($projectKey)], 422);
+        }
+
 
         $user->activatedProjectKeys()->attach($projectKeyIdToActivate);
 
