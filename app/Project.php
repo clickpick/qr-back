@@ -46,10 +46,18 @@ use Spatie\MediaLibrary\Models\Media;
  * @property-read int|null $project_keys_count
  * @property-read Collection|ProjectFact[] $projectFacts
  * @property-read int|null $project_facts_count
+ * @property int $status
+ * @property-read Collection|Media[] $media
+ * @property-read int|null $media_count
+ * @method static Builder|Project whereStatus($value)
  */
 class Project extends Model implements HasMedia
 {
     use HasMediaTrait;
+
+    public const WAITING = 0;
+    public const APPROVED = 1;
+    public const DECLINE = 2;
 
     protected $fillable = [
         'name',
@@ -59,6 +67,7 @@ class Project extends Model implements HasMedia
         'prize',
         'winners_count',
         'is_active',
+        'status'
     ];
 
     protected $dispatchesEvents = [
@@ -71,6 +80,10 @@ class Project extends Model implements HasMedia
 
     public function projectFacts() {
         return $this->hasMany(ProjectFact::class);
+    }
+
+    public function scopeVisibleForUsers(Builder $query) {
+        return $query->where('status', self::APPROVED);
     }
 
     public function registerMediaCollections()

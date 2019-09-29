@@ -24,7 +24,8 @@ class ProjectsTableSeeder extends Seeder
             'prize' => 'panda',
             'goal_funds' => 2387000,
             'raised_funds' => 1026000,
-            'is_active' => true
+            'is_active' => true,
+            'status' => Project::APPROVED
         ]);
 
         $project->addMedia(storage_path('app/seed/panda.png'))->preservingOriginal()->toMediaCollection('poster');
