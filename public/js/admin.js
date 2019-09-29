@@ -1929,7 +1929,7 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
       projects: {
         data: [_model_project__WEBPACK_IMPORTED_MODULE_0__["reactive"]],
         head: ["ID", "Название", "Описание", "Сумма сбора", "Приз", "Ссылка на фонд", "Обратная связь"],
-        schema: ["id", "name", "description", "donate", "prize", "link", "contact"]
+        schema: ["id", "name", "description", "goal_funds", "prize", "link", "contact"]
       }
     };
   },
@@ -1943,8 +1943,8 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
     var _this = this;
 
     this.$axios.get("/admin/api/projects").then(function (response) {
-      var _response$reduce = response.reduce(function (result, item) {
-        if (item.isActive) {
+      var _response$data$reduce = response.data.reduce(function (result, item) {
+        if (item.is_active) {
           result[0].push(item);
         } else {
           result[1].push(item);
@@ -1953,10 +1953,10 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
         return result;
       }, [[], []]);
 
-      var _response$reduce2 = _slicedToArray(_response$reduce, 2);
+      var _response$data$reduce2 = _slicedToArray(_response$data$reduce, 2);
 
-      _this.active = _response$reduce2[0];
-      _this.projects = _response$reduce2[1];
+      _this.active = _response$data$reduce2[0];
+      _this.projects = _response$data$reduce2[1];
     });
     this.bus = new vue__WEBPACK_IMPORTED_MODULE_1___default.a();
     this.bus.$on("row.click", function (id) {
@@ -1990,7 +1990,19 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
       this.open = false;
 
       if (result) {
-        this.$axios.post("/admin/update", this.$refs.fields.get());
+        var data = new FormData();
+        var fields = this.$refs.fields.get();
+        var has = Object.prototype.hasOwnProperty;
+
+        for (var prop in fields) {
+          if (has.call(fields, prop)) {
+            data.append(prop, fields[prop] || null);
+          }
+        }
+
+        data.append("poster", this.project.poster ? this.project.poster.sourceFile : null);
+        data.append("banner", this.project.banner ? this.project.banner.sourceFile : null);
+        this.$axios.post("/admin/update", data);
       }
     }
   }
@@ -2185,7 +2197,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n.main {\n  position: relative;\n  flex-grow: 1;\n}\n.main .mdc-top-app-bar--fixed {\n  top: 0;\n}\n.main .mdc-typography--body2 {\n  padding: 16px;\n}\n.balmui-container--flex {\n  display: flex;\n  height: 100vh;\n}\n.mdc-data-table__cell:nth-child(1) {\n  text-align: right;\n}\n.mdc-data-table__cell:nth-child(2) {\n  width: 8vw;\n}\n.mdc-data-table__cell:nth-child(3) {\n  width: 20vw;\n}\n.mdc-data-table__cell:nth-child(4) {\n  width: 6vw;\n  text-align: right;\n}\n.mdc-data-table__cell:nth-child(5) {\n  width: 12vw;\n}\n.mdc-data-table__cell:nth-child(6) {\n  width: 22vw;\n}\n", ""]);
+exports.push([module.i, "\n.main {\n  position: relative;\n  flex-grow: 1;\n}\n.main .mdc-top-app-bar--fixed {\n  top: 0;\n}\n.main .mdc-typography--body2 {\n  padding: 16px;\n}\n.balmui-container--flex {\n  display: flex;\n  height: 100vh;\n}\n.mdc-data-table__cell:nth-child(1) {\n  text-align: right;\n}\n.mdc-data-table__cell:nth-child(2) {\n  width: 8vw;\n}\n.mdc-data-table__cell:nth-child(3) {\n  width: 20vw;\n}\n.mdc-data-table__cell:nth-child(4) {\n  width: 6vw;\n  text-align: right;\n}\n.mdc-data-table__cell:nth-child(5) {\n  width: 12vw;\n}\n.mdc-data-table__cell:nth-child(6) {\n  width: 22vw;\n}\n.mdc-dialog__surface {\n  width: 100vw;\n  overflow: hidden;\n}\n.preview-list {\n  margin: 0;\n  padding: 16px 0;\n  width: 100%;\n  list-style: none;\n}\n.preview-list .preview {\n  display: block;\n  width: 100%;\n}\n", ""]);
 
 // exports
 
@@ -23201,7 +23213,7 @@ var render = function() {
             [
               _c("v-fields", {
                 ref: "fields",
-                attrs: { project: _vm.project, additional: true }
+                attrs: { project: _vm.project, additional: false }
               }),
               _vm._v(" "),
               _c("ui-text-divider", [_vm._v("Постер (иконка)")]),
@@ -23277,7 +23289,9 @@ var render = function() {
             1
           ),
           _vm._v(" "),
-          _c("ui-dialog-actions")
+          _c("ui-dialog-actions", {
+            attrs: { acceptText: "Обновить", cancelText: "Отмена" }
+          })
         ],
         1
       )

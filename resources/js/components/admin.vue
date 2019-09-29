@@ -17,7 +17,7 @@
     <ui-dialog :open="open" @confirm="onUpdateProject">
       <ui-dialog-title>Изменение заявки</ui-dialog-title>
       <ui-dialog-content>
-        <v-fields :project="project" ref="fields" :additional="true" />
+        <v-fields :project="project" ref="fields" :additional="false" />
         <ui-text-divider>Постер (иконка)</ui-text-divider>
         <ui-file accept="image/*" preview @change="$_setPoster" text="Загрузить" />
         <transition-group class="preview-list" name="list" tag="ul">
@@ -39,7 +39,7 @@
           </li>
         </transition-group>
       </ui-dialog-content>
-      <ui-dialog-actions />
+      <ui-dialog-actions acceptText="Обновить" cancelText="Отмена" />
     </ui-dialog>
   </div>
 </template>
@@ -66,7 +66,7 @@ export default {
           "Ссылка на фонд",
           "Обратная связь"
         ],
-        schema: ["id", "name", "description", "donate", "prize", "link", "contact"]
+        schema: ["id", "name", "description", "goal_funds", "prize", "link", "contact"]
       }
     };
   },
@@ -78,8 +78,8 @@ export default {
   },
   created() {
     this.$axios.get("/admin/api/projects").then((response) => {
-      [this.active, this.projects] = response.reduce((result, item) => {
-        if (item.isActive) {
+      [this.active, this.projects] = response.data.reduce((result, item) => {
+        if (item.is_active) {
           result[0].push(item);
         } else {
           result[1].push(item);
@@ -118,7 +118,20 @@ export default {
       this.open = false;
 
       if (result) {
-        this.$axios.post("/admin/update", this.$refs.fields.get());
+        const data = new FormData();
+        const fields = this.$refs.fields.get();
+
+        const has = Object.prototype.hasOwnProperty;
+        for (const prop in fields) {
+          if (has.call(fields, prop)) {
+            data.append(prop, fields[prop] || null);
+          }
+        }
+
+        data.append("poster", this.project.poster ? this.project.poster.sourceFile : null);
+        data.append("banner", this.project.banner ? this.project.banner.sourceFile : null);
+
+        this.$axios.post("/admin/update", data);
       }
     }
   }
@@ -162,5 +175,22 @@ export default {
 }
 .mdc-data-table__cell:nth-child(6) {
   width: 22vw;
+}
+
+.mdc-dialog__surface {
+  width: 100vw;
+  overflow: hidden;
+}
+
+.preview-list {
+  margin: 0;
+  padding: 16px 0;
+  width: 100%;
+  list-style: none;
+}
+
+.preview-list .preview {
+  display: block;
+  width: 100%;
 }
 </style>
