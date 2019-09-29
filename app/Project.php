@@ -50,6 +50,8 @@ use Spatie\MediaLibrary\Models\Media;
  * @property-read Collection|Media[] $media
  * @property-read int|null $media_count
  * @method static Builder|Project whereStatus($value)
+ * @property bool $is_finished
+ * @method static Builder|Project whereIsFinished($value)
  */
 class Project extends Model implements HasMedia
 {
@@ -80,10 +82,6 @@ class Project extends Model implements HasMedia
 
     public function projectFacts() {
         return $this->hasMany(ProjectFact::class);
-    }
-
-    public function scopeVisibleForUsers(Builder $query) {
-        return $query->where('status', self::APPROVED);
     }
 
     public function registerMediaCollections()

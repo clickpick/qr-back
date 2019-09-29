@@ -29,6 +29,7 @@ class ProjectResource extends JsonResource
             'goal_funds' => $this->goal_funds,
             'prize' => $this->prize,
             'winners_count' => $this->winners_count,
+            'is_finished' => $this->is_finished,
             'poster_url' => $this->getFirstMedia('poster')->getFullUrl('card'),
             'banner_url' => $this->getFirstMedia('banner')->getFullUrl('card'),
         ];
