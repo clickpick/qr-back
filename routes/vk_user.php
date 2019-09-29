@@ -9,3 +9,5 @@ Route::post('projects/{project}/activate-project-key', 'ProjectController@activa
 Route::get('projects/{project}/project-facts', 'ProjectController@getFacts');
 
 Route::get('active-project', 'ProjectController@getActive');
+
+Route::post('notifications', 'MeController@setNotificationsAreEnabled');
