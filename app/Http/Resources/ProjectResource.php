@@ -30,8 +30,8 @@ class ProjectResource extends JsonResource
             'prize' => $this->prize,
             'winners_count' => $this->winners_count,
             'is_finished' => $this->is_finished,
-            'poster_url' => $this->getFirstMedia('poster')->getFullUrl('card'),
-            'banner_url' => $this->getFirstMedia('banner')->getFullUrl('card'),
+            'poster_url' => $this->getFirstMedia('poster') ? $this->getFirstMedia('poster')->getFullUrl('card') : null,
+            'banner_url' => $this->getFirstMedia('poster') ? $this->getFirstMedia('banner')->getFullUrl('card') : null,
         ];
     }
 }

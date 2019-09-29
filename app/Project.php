@@ -55,6 +55,10 @@ use Spatie\MediaLibrary\Models\Media;
  * @method static Builder|Project whereStatus($value)
  * @property bool $is_finished
  * @method static Builder|Project whereIsFinished($value)
+ * @property string|null $link
+ * @property string|null $contact
+ * @method static Builder|Project whereContact($value)
+ * @method static Builder|Project whereLink($value)
  */
 class Project extends Model implements HasMedia
 {
@@ -72,7 +76,9 @@ class Project extends Model implements HasMedia
         'prize',
         'winners_count',
         'is_active',
-        'status'
+        'status',
+        'link',
+        'contact'
     ];
 
     protected $dispatchesEvents = [
@@ -175,5 +181,16 @@ class Project extends Model implements HasMedia
         (new VkClient())->sendPushes($vkIds, "Спасибо за участие! За время флэшмоба мы собрали {$this->raised_funds}₽ на проект ”{$this->name}”. 
 Несмотря на то, что проект закончился, вы можете
 пожертвовать средства, которые пойдут на этот или другие проекты этого фонда.");
+    }
+
+    public function activate() {
+        DB::transaction(function() {
+            Project::whereIsActive(true)->update([
+                'is_active' => false
+            ]);
+
+            $this->is_active = true;
+            $this->save();
+        });
     }
 }

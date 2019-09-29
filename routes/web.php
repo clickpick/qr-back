@@ -19,6 +19,7 @@ Route::prefix('admin')->middleware('auth')->group(function() {
 
     Route::prefix('api')->group(function() {
         Route::apiResource('projects', 'Admin\ProjectController');
+        Route::post('projects/{project}/activate', 'Admin\ProjectController@makeActive');
     });
 });
 

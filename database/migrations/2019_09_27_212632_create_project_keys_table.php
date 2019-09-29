@@ -18,12 +18,14 @@ class CreateProjectKeysTable extends Migration
 
             $table->char('value');
 
-            $table->tinyInteger('order')->unique();
+            $table->tinyInteger('order');
 
             $table->unsignedBigInteger('project_id');
             $table->foreign('project_id')->references('id')->on('projects')->onDelete('CASCADE');
 
             $table->float('drop_rate', 5, 2);
+
+            $table->unique(['order', 'project_id']);
 
             $table->timestamps();
         });
