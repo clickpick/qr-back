@@ -70,6 +70,7 @@ class VkUserGuard {
             'vk_user_id' => $params['vk_user_id'],
         ], [
             'utc_offset' => $params['utc_offset'],
+            'notifications_are_enabled' => $params['vk_are_notifications_enabled'],
             'visited_at' => now()
         ]);
     }
