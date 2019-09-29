@@ -78,7 +78,7 @@ export default {
   },
   created() {
     this.$axios.get("/admin/api/projects").then((response) => {
-      [this.active, this.projects] = response.data.reduce((result, item) => {
+      const [active, other] = response.data.data.reduce((result, item) => {
         if (item.is_active) {
           result[0].push(item);
         } else {
@@ -87,31 +87,38 @@ export default {
 
         return result;
       }, [[], []]);
+
+      this.$set(this, "active", active);
+      this.$set(this.projects, "data", other);
     });
 
     this.bus = new EventBus();
-
     this.bus.$on("row.click", (id) => {
-      if (id >= 0 && id < this.projects.data.length) {
-        this.project = this.projects.data[id];
+      const project = [...this.projects.data, ...this.active].find((item) => {
+        return +item.id === +id;
+      });
+
+      if (project) {
+        this.$set(this, "project", project);
         this.open = true;
       }
     });
   },
   methods: {
     $_registerClick() {
-      Array.from(this.$el.getElementsByClassName("mdc-data-table__row")).forEach((el, id) => {
+      Array.from(this.$el.getElementsByClassName("mdc-data-table__row")).forEach((el) => {
+        const id = el.getElementsByClassName("mdc-data-table__cell")[0].textContent;
         el.onclick = () => this.bus.$emit("row.click", id);
       });
     },
     $_setPoster(files) {
       if (files && files.length && files[0]) {
-        this.project.poster = files[0];
+        this.$set(this.project, "poster", files[0]);
       }
     },
     $_setBanner(files) {
       if (files && files.length && files[0]) {
-        this.project.banner = files[0];
+        this.$set(this.project, "banner", files[0]);
       }
     },
     onUpdateProject(result) {
@@ -131,7 +138,9 @@ export default {
         data.append("poster", this.project.poster ? this.project.poster.sourceFile : null);
         data.append("banner", this.project.banner ? this.project.banner.sourceFile : null);
 
-        this.$axios.post("/admin/update", data);
+        data.append("_method", "PUT");
+
+        this.$axios.post(`/admin/api/projects/${this.project.id}`, data);
       }
     }
   }

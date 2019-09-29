@@ -104,6 +104,8 @@
 </template>
 
 <script>
+import Vue from "vue";
+
 export default {
   name: "v-fields",
   props: {
@@ -121,8 +123,9 @@ export default {
   watch: {
     project: {
       deep: true,
+      immediate: true,
       handler(val) {
-        this.$_project = { ...this.$_project, ...val };
+        Vue.set(this, "$_project", { ...this.$_project, ...val });
       }
     }
   },

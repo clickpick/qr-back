@@ -1863,6 +1863,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _model_project__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../model/project */ "./resources/js/model/project.js");
 /* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.common.js");
 /* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(vue__WEBPACK_IMPORTED_MODULE_1__);
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
+
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
+
+function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter); }
+
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
+
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
 
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
@@ -1943,7 +1951,7 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
     var _this = this;
 
     this.$axios.get("/admin/api/projects").then(function (response) {
-      var _response$data$reduce = response.data.reduce(function (result, item) {
+      var _response$data$data$r = response.data.data.reduce(function (result, item) {
         if (item.is_active) {
           result[0].push(item);
         } else {
@@ -1951,17 +1959,24 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
         }
 
         return result;
-      }, [[], []]);
+      }, [[], []]),
+          _response$data$data$r2 = _slicedToArray(_response$data$data$r, 2),
+          active = _response$data$data$r2[0],
+          other = _response$data$data$r2[1];
 
-      var _response$data$reduce2 = _slicedToArray(_response$data$reduce, 2);
+      _this.$set(_this, "active", active);
 
-      _this.active = _response$data$reduce2[0];
-      _this.projects = _response$data$reduce2[1];
+      _this.$set(_this.projects, "data", other);
     });
     this.bus = new vue__WEBPACK_IMPORTED_MODULE_1___default.a();
     this.bus.$on("row.click", function (id) {
-      if (id >= 0 && id < _this.projects.data.length) {
-        _this.project = _this.projects.data[id];
+      var project = [].concat(_toConsumableArray(_this.projects.data), _toConsumableArray(_this.active)).find(function (item) {
+        return +item.id === +id;
+      });
+
+      if (project) {
+        _this.$set(_this, "project", project);
+
         _this.open = true;
       }
     });
@@ -1970,7 +1985,9 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
     $_registerClick: function $_registerClick() {
       var _this2 = this;
 
-      Array.from(this.$el.getElementsByClassName("mdc-data-table__row")).forEach(function (el, id) {
+      Array.from(this.$el.getElementsByClassName("mdc-data-table__row")).forEach(function (el) {
+        var id = el.getElementsByClassName("mdc-data-table__cell")[0].textContent;
+
         el.onclick = function () {
           return _this2.bus.$emit("row.click", id);
         };
@@ -1978,12 +1995,12 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
     },
     $_setPoster: function $_setPoster(files) {
       if (files && files.length && files[0]) {
-        this.project.poster = files[0];
+        this.$set(this.project, "poster", files[0]);
       }
     },
     $_setBanner: function $_setBanner(files) {
       if (files && files.length && files[0]) {
-        this.project.banner = files[0];
+        this.$set(this.project, "banner", files[0]);
       }
     },
     onUpdateProject: function onUpdateProject(result) {
@@ -2002,7 +2019,8 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
         data.append("poster", this.project.poster ? this.project.poster.sourceFile : null);
         data.append("banner", this.project.banner ? this.project.banner.sourceFile : null);
-        this.$axios.post("/admin/update", data);
+        data.append("_method", "PUT");
+        this.$axios.post("/admin/api/projects/".concat(this.project.id), data);
       }
     }
   }
@@ -2019,6 +2037,8 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.common.js");
+/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(vue__WEBPACK_IMPORTED_MODULE_0__);
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(source, true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(source).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
@@ -2130,6 +2150,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "v-fields",
   props: {
@@ -2147,8 +2168,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   watch: {
     project: {
       deep: true,
+      immediate: true,
       handler: function handler(val) {
-        this.$_project = _objectSpread({}, this.$_project, {}, val);
+        vue__WEBPACK_IMPORTED_MODULE_0___default.a.set(this, "$_project", _objectSpread({}, this.$_project, {}, val));
       }
     }
   },
