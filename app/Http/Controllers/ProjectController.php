@@ -40,7 +40,7 @@ class ProjectController extends Controller
         $user = Auth::user();
 
         if ($projectKeyIdToActivate->user_id === $user->id) {
-            abort(404);
+            abort(403);
         }
 
         $userActivatedKeys = $user->activatedProjectKeys;
