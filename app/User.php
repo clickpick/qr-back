@@ -175,4 +175,9 @@ class User extends Authenticatable
 
         return $this->projectKeys()->where('project_id', $project->id)->first();
     }
+
+    public function disableNotifications() {
+        $this->notifications_are_enabled = false;
+        $this->save();
+    }
 }

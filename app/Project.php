@@ -3,12 +3,15 @@
 namespace App;
 
 use App\Events\ProjectCreated;
+use App\Events\ProjectHasFinished;
+use App\Services\VkClient;
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Spatie\Image\Manipulations;
 use Spatie\MediaLibrary\HasMedia\HasMedia;
@@ -130,5 +133,47 @@ class Project extends Model implements HasMedia
         $projectKeyId = Arr::random($dispersion);
 
         return ProjectKey::find($projectKeyId);
+    }
+
+    public function checkIsFinished() {
+        $keysCount = $this->projectKeys()->count();
+
+
+        $winnersCount = DB::table('activated_project_key_user')
+            ->join('project_keys', 'activated_project_key_user.project_key_id', '=', 'project_keys.id')
+            ->where('project_keys.project_id', $this->id)
+            ->having(DB::raw('count(activated_project_key_user.id)'), '>=', $keysCount)
+            ->groupBy('activated_project_key_user.user_id')
+            ->select(DB::raw('count(activated_project_key_user.id) as count'))
+            ->count();
+
+        if ($winnersCount >= $this->winners_count) {
+            $this->is_finished = true;
+            $this->save();
+
+            event(new ProjectHasFinished($this));
+        }
+    }
+
+    public function sendFinishedNotification() {
+        $usersIdsObject = DB::table('activated_project_key_user')
+            ->where('project_keys.project_id', $this->id)
+            ->join('project_keys', 'activated_project_key_user.project_key_id', '=', 'project_keys.id')
+            ->distinct('user_id')
+            ->select('user_id')->get();
+
+        $userIds = $usersIdsObject->pluck('user_id');
+
+        $users = User::whereIn('id', $userIds)
+            ->where('notifications_are_enabled', true)
+            ->select('vk_user_id')
+            ->get();
+
+        $vkIds = $users->pluck('vk_user_id');
+
+
+        (new VkClient())->sendPushes($vkIds, "Спасибо за участие! За время флэшмоба мы собрали {$this->raised_funds}₽ на проект ”{$this->name}”. 
+Несмотря на то, что проект закончился, вы можете
+пожертвовать средства, которые пойдут на этот или другие проекты этого фонда.");
     }
 }

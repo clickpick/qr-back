@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\ProjectKeyActivated;
 use App\Http\Requests\ActivateProjectKeyRequest;
 use App\Http\Resources\ProjectFactResource;
 use App\Http\Resources\ProjectKeyResource;
@@ -55,6 +56,7 @@ class ProjectController extends Controller
 
 
         $user->activatedProjectKeys()->attach($projectKeyIdToActivate);
+        event(new ProjectKeyActivated($projectKey));
 
         return new ProjectKeyResource($projectKey);
     }

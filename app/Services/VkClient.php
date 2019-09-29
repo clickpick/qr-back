@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use App\Jobs\DisableNotificationForVkUser;
+use Illuminate\Support\Collection;
 use VK\Client\VKApiClient;
 
 class VkClient {
@@ -26,5 +28,24 @@ class VkClient {
         ]);
 
         return $isFew ? $response : $response[0];
+    }
+
+    public function sendPushes(Collection $ids, $message) {
+
+        $ids->chunk(100)->each(function(Collection $chunkedIds) use ($message) {
+
+            $result = $this->client->notifications()->sendMessage($this->accessToken, [
+                'user_ids' => $chunkedIds->implode(','),
+                'message' => $message
+            ]);
+
+            collect($result)->filter(function ($item) {
+                return !$item['status'];
+            })->filter(function( $item) {
+                return $item['error']['code'] === 1;
+            })->each(function($item) {
+                DisableNotificationForVkUser::dispatch($item['user_id']);
+            });
+        });
     }
 }

@@ -3,9 +3,13 @@
 namespace App\Providers;
 
 use App\Events\ProjectCreated;
+use App\Events\ProjectHasFinished;
+use App\Events\ProjectKeyActivated;
 use App\Events\UserCreated;
+use App\Listeners\CheckProjectIsFinished;
 use App\Listeners\FillPersonalDataFromVk;
 use App\Listeners\GenerateSymbolsForProject;
+use App\Listeners\SendProjectFinishedNotifications;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -30,6 +34,14 @@ class EventServiceProvider extends ServiceProvider
         SocialiteWasCalled::class => [
             'SocialiteProviders\\VKontakte\\VKontakteExtendSocialite@handle',
         ],
+
+        ProjectKeyActivated::class =>[
+            CheckProjectIsFinished::class
+        ],
+
+        ProjectHasFinished::class => [
+            SendProjectFinishedNotifications::class
+        ]
     ];
 
     /**
