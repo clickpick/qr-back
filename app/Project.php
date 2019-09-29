@@ -115,7 +115,7 @@ class Project extends Model implements HasMedia
             });
     }
 
-    public function generateProjectKeys($count = 2) {
+    public function generateProjectKeys($count = 5) {
 
         $minRate = 10;
 
