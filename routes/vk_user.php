@@ -13,3 +13,5 @@ Route::post('projects/{project}/add-funds', 'ProjectController@addFunds');
 Route::get('active-project', 'ProjectController@getActive');
 
 Route::post('notifications', 'MeController@setNotificationsAreEnabled');
+
+Route::post('request-funding', 'Admin\ProjectController@store');
