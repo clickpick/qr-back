@@ -24,7 +24,8 @@ class ProjectKeyResource extends JsonResource
         return [
             'id' => $this->id,
             'value' => trim($this->value),
-            'order' => $this->order
+            'order' => $this->order,
+            'is_last' => $this->is_last ?? false
         ];
     }
 }

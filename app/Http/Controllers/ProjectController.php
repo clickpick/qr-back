@@ -58,6 +58,11 @@ class ProjectController extends Controller
         $user->activatedProjectKeys()->attach($projectKeyIdToActivate);
         event(new ProjectKeyActivated($projectKey));
 
+        $project = $projectKey->project;
+        $project->refresh();
+
+        $projectKey->setAttribute('is_last', $project->is_finished);
+
         return new ProjectKeyResource($projectKey);
     }
 
