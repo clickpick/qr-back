@@ -117,7 +117,7 @@ class Project extends Model implements HasMedia
 
     public function generateProjectKeys($count = 5) {
 
-        $minRate = 10;
+        $minRate = 1;
 
         $otherRate = round((100 - $minRate) / ($count - 1), 2);
 
