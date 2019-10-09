@@ -51,7 +51,7 @@ class ProjectController extends Controller
 
         $projectKey = ProjectKey::find($projectKeyIdToActivate);
 
-        if ($userActivatedKeys->contains('id', $projectKeyIdToActivate)) {
+        if ($user->activatedProjectKeys()->where('project_key_id', $projectKey->id)->exists()) {
             return response(['data' => new ProjectKeyResource($projectKey)], 422);
         }
 
