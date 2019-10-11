@@ -19,6 +19,9 @@ class MeController extends Controller
         if ($activeProject) {
             $activeUserKey = $user->getProjectKeyForProject($activeProject);
             $user->setRelation('activeProjectKey', $activeUserKey);
+
+            $activatedKeys = $user->getActivatedProjectKeys($activeProject);
+            $user->setRelation('activatedProjectKeys', $activatedKeys);
         }
 
         return new UserResource($user);

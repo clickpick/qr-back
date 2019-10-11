@@ -12,6 +12,7 @@ use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Notifications\DatabaseNotificationCollection;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Spatie\Regex\Regex;
 
@@ -179,5 +180,19 @@ class User extends Authenticatable
     public function disableNotifications() {
         $this->notifications_are_enabled = false;
         $this->save();
+    }
+
+    public function getActivatedProjectKeys(Project $project) {
+        $activatedIds = DB::table('activated_project_key_user')
+            ->where('project_keys.project_id', $project->id)
+            ->where('activated_project_key_user.user_id', $this->id)
+            ->select('activated_project_key_user.project_key_id')
+            ->join('project_keys', 'activated_project_key_user.project_key_id', '=', 'project_keys.id')
+            ->get()
+            ->map(function($item) {
+                return $item->project_key_id;
+            });
+
+        return ProjectKey::whereIn('id', $activatedIds)->get();
     }
 }

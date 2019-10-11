@@ -30,7 +30,8 @@ class UserResource extends JsonResource
             'utc_offset' => $this->utc_offset,
             'messages_are_enabled' => $this->messages_are_enabled,
             'notifications_are_enabled' => $this->notifications_are_enabled,
-            'active_project_token' => new ProjectKeyTokenResource($this->whenLoaded('activeProjectKey'))
+            'active_project_token' => new ProjectKeyTokenResource($this->whenLoaded('activeProjectKey')),
+            'activated_project_keys' => ProjectKeyResource::collection($this->whenLoaded('activatedProjectKeys'))
         ];
     }
 }
