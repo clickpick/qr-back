@@ -33,6 +33,7 @@ class ProjectResource extends JsonResource
             'is_finished' => $this->is_finished,
             'poster_url' => $this->getFirstMedia('poster') ? $this->getFirstMedia('poster')->getFullUrl('card') : null,
             'banner_url' => $this->getFirstMedia('poster') ? $this->getFirstMedia('banner')->getFullUrl('card') : null,
+            'project_facts' => ProjectFactResource::collection($this->whenLoaded('projectFacts'))
         ];
     }
 }

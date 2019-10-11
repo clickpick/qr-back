@@ -18,7 +18,11 @@ use Illuminate\Support\Facades\DB;
 class ProjectController extends Controller
 {
     public function getActive() {
-        return new ProjectResource(Project::whereIsActive(true)->firstOrFail());
+        $project = Project::whereIsActive(true)->firstOrFail();
+
+        $project->load('projectFacts');
+
+        return new ProjectResource($project);
     }
 
     public function getUserProjectKey(Project $project) {
