@@ -57,6 +57,8 @@ use Spatie\Regex\Regex;
  * @property-read int|null $project_keys_count
  * @property-read Collection|ProjectKey[] $activatedProjectKeys
  * @property-read int|null $activated_project_keys_count
+ * @property-read Collection|VkPayOrder[] $vkPayOrders
+ * @property-read int|null $vk_pay_orders_count
  */
 class User extends Authenticatable
 {
@@ -103,6 +105,10 @@ class User extends Authenticatable
 
     public function activatedProjectKeys() {
         return $this->belongsToMany(ProjectKey::class, 'activated_project_key_user');
+    }
+
+    public function vkPayOrders() {
+        return $this->hasMany(VkPayOrder::class);
     }
 
 

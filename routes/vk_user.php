@@ -14,4 +14,7 @@ Route::get('active-project', 'ProjectController@getActive');
 
 Route::post('notifications', 'MeController@setNotificationsAreEnabled');
 
+Route::post('vk-pay-order', 'VkPayController@makeOrder');
+
 Route::post('request-funding', 'Admin\ProjectController@store');
+

@@ -44,6 +44,10 @@ return [
             'secret' => env('VK_APP_SECRET'),
             'service' => env('VK_APP_SERVICE_KEY'),
         ],
+        'pay' => [
+            'merchant_id' => env('VK_MERCHANT_ID'),
+            'secret' => env('VK_MERCHANT_SECRET')
+        ]
     ]
 
 ];
