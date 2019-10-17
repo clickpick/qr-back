@@ -54,6 +54,8 @@ class VkPay
 
         $params['sign'] = $this->generateSign($params);
 
+        $params['data'] = json_decode($params['data'], true);
+
         return $params;
     }
 
