@@ -50,7 +50,8 @@ class VkPayOrder extends Model
     protected $fillable = [
         'amount',
         'payload',
-        'status'
+        'status',
+        'destination'
     ];
 
 
