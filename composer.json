@@ -19,7 +19,8 @@
         "socialiteproviders/vkontakte": "^4.0",
         "spatie/laravel-medialibrary": "^7.0.0",
         "spatie/regex": "^1.4",
-        "vkcom/vk-php-sdk": "^5.101"
+        "vkcom/vk-php-sdk": "^5.101",
+        "ext-openssl": "*"
     },
     "require-dev": {
         "barryvdh/laravel-ide-helper": "^2.6",

@@ -40,6 +40,9 @@ class RouteServiceProvider extends ServiceProvider
         $this->mapWebRoutes();
 
         $this->mapVkUserRoutes();
+
+        $this->mapCallbacksRoutes();
+
     }
 
     /**
@@ -76,5 +79,12 @@ class RouteServiceProvider extends ServiceProvider
             ->middleware('vk_user')
             ->namespace($this->namespace)
             ->group(base_path('routes/vk_user.php'));
+    }
+
+    protected function mapCallbacksRoutes() {
+        Route::prefix('callbacks')
+            ->middleware('callbacks')
+            ->namespace($this->namespace)
+            ->group(base_path('routes/callbacks.php'));
     }
 }
