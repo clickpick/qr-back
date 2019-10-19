@@ -56,12 +56,16 @@ class ProjectController extends Controller
         $projectKey = ProjectKey::find($projectKeyIdToActivate);
 
         if ($user->activatedProjectKeys()->where('project_key_id', $projectKey->id)->exists()) {
+
+            $userHasCheat = $user->hasAvailableNotFiredCheatForProject($project);
+            $projectKey->setAttribute('hasCheat', $userHasCheat);
+
             return response(['data' => new ProjectKeyResource($projectKey)], 422);
         }
 
 
         $user->activatedProjectKeys()->attach($projectKeyIdToActivate);
-        event(new ProjectKeyActivated($projectKey));
+        event(new ProjectKeyActivated($projectKey, $user));
 
         $project = $projectKey->project;
         $project->refresh();

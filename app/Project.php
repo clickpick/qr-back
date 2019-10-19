@@ -70,6 +70,9 @@ class Project extends Model implements HasMedia
     public const APPROVED = 1;
     public const DECLINE = 2;
 
+
+    const KEYS_COUNT = 5;
+
     protected $fillable = [
         'name',
         'description',
@@ -115,7 +118,7 @@ class Project extends Model implements HasMedia
             });
     }
 
-    public function generateProjectKeys($count = 5) {
+    public function generateProjectKeys($count = self::KEYS_COUNT) {
 
         $minRate = 2;
 

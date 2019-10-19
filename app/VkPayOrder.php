@@ -32,6 +32,8 @@ use Illuminate\Support\Str;
  * @method static Builder|VkPayOrder whereUpdatedAt($value)
  * @method static Builder|VkPayOrder whereUserId($value)
  * @mixin Eloquent
+ * @property string $destination
+ * @method static Builder|VkPayOrder whereDestination($value)
  */
 class VkPayOrder extends Model
 {
@@ -39,6 +41,11 @@ class VkPayOrder extends Model
     const PAID = 1;
     const HOLD = 2;
     const DECLINED = 3;
+
+    const DONATE = 'donate';
+    const CHEAT = 'cheat';
+
+    const CHEAT_VALUE = 50;
 
     protected $fillable = [
         'amount',

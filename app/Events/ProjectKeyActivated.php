@@ -3,6 +3,7 @@
 namespace App\Events;
 
 use App\ProjectKey;
+use App\User;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
@@ -16,14 +17,17 @@ class ProjectKeyActivated
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public $projectKey;
+    public $user;
 
     /**
      * Create a new event instance.
      *
      * @param ProjectKey $projectKey
+     * @param User $user
      */
-    public function __construct(ProjectKey $projectKey)
+    public function __construct(ProjectKey $projectKey, User $user)
     {
         $this->projectKey = $projectKey;
+        $this->user = $user;
     }
 }

@@ -25,7 +25,8 @@ class ProjectKeyResource extends JsonResource
             'id' => $this->id,
             'value' => trim($this->value),
             'order' => $this->order,
-            'is_last' => $this->is_last ?? false
+            'is_last' => $this->is_last ?? false,
+            'has_cheat' => $this->hasCheat ?? false
         ];
     }
 }

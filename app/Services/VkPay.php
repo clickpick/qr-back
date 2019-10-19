@@ -20,10 +20,11 @@ class VkPay
         $this->appSecret = $appSecret;
     }
 
-    public function makeOrder(User $user, $amount)
+    public function makeOrder(User $user, $amount, $destination)
     {
         $this->vkPayOrder = $user->vkPayOrders()->create([
-            'amount' => $amount
+            'amount' => $amount,
+            'destination' => $destination
         ]);
 
         return $this->createParams();

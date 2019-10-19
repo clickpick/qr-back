@@ -59,6 +59,8 @@ use Spatie\Regex\Regex;
  * @property-read int|null $activated_project_keys_count
  * @property-read Collection|VkPayOrder[] $vkPayOrders
  * @property-read int|null $vk_pay_orders_count
+ * @property-read Collection|AvailableCheat[] $availableCheats
+ * @property-read int|null $available_cheats_count
  */
 class User extends Authenticatable
 {
@@ -99,20 +101,29 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    public function projectKeys() {
+    public function projectKeys()
+    {
         return $this->belongsToMany(ProjectKey::class)->withPivot('token');
     }
 
-    public function activatedProjectKeys() {
+    public function activatedProjectKeys()
+    {
         return $this->belongsToMany(ProjectKey::class, 'activated_project_key_user');
     }
 
-    public function vkPayOrders() {
+    public function vkPayOrders()
+    {
         return $this->hasMany(VkPayOrder::class);
     }
 
+    public function availableCheats()
+    {
+        return $this->hasMany(AvailableCheat::class);
+    }
 
-    public function fillPersonalInfoFromVk($data = null) {
+
+    public function fillPersonalInfoFromVk($data = null)
+    {
         $data = $data ?? (new VkClient())->getUsers($this->vk_user_id, ['first_name', 'last_name', 'photo_200', 'timezone', 'sex', 'bdate']);
 
         $this->first_name = $data['first_name'] ?? null;
@@ -155,7 +166,8 @@ class User extends Authenticatable
      * @param $vkId
      * @return User
      */
-    public static function getByVkId($vkId) : ?self {
+    public static function getByVkId($vkId): ?self
+    {
 
         if (!$vkId) {
             return null;
@@ -164,12 +176,14 @@ class User extends Authenticatable
         return self::firstOrCreate(['vk_user_id' => $vkId]);
     }
 
-    public function isAdmin() {
+    public function isAdmin()
+    {
         return $this->is_admin;
     }
 
 
-    public function getProjectKeyForProject(Project $project) {
+    public function getProjectKeyForProject(Project $project)
+    {
         if ($this->projectKeys()->where('project_id', $project->id)->exists()) {
             return $this->projectKeys()->where('project_id', $project->id)->first();
         }
@@ -183,22 +197,62 @@ class User extends Authenticatable
         return $this->projectKeys()->where('project_id', $project->id)->first();
     }
 
-    public function disableNotifications() {
+    public function disableNotifications()
+    {
         $this->notifications_are_enabled = false;
         $this->save();
     }
 
-    public function getActivatedProjectKeys(Project $project) {
+    public function getActivatedProjectKeys(Project $project)
+    {
         $activatedIds = DB::table('activated_project_key_user')
             ->where('project_keys.project_id', $project->id)
             ->where('activated_project_key_user.user_id', $this->id)
             ->select('activated_project_key_user.project_key_id')
             ->join('project_keys', 'activated_project_key_user.project_key_id', '=', 'project_keys.id')
             ->get()
-            ->map(function($item) {
+            ->map(function ($item) {
                 return $item->project_key_id;
             });
 
         return ProjectKey::whereIn('id', $activatedIds)->get();
+    }
+
+    public function hasAvailableNotFiredCheatForProject(Project $project)
+    {
+        return $this->availableCheats()
+            ->where('project_id', $project->id)
+            ->where('is_fired', false)
+            ->exists();
+    }
+
+
+    public function hasAvailableNotFiredCheatForActiveProject()
+    {
+        $activeProject = Project::where('is_active', true)->first();
+
+        /** @var Project $activeProject */
+        return $this->hasAvailableNotFiredCheatForProject($activeProject);
+    }
+
+    public function addCheatForProject(Project $project)
+    {
+        return $this->availableCheats()->create([
+            'project_id' => $project->id
+        ]);
+    }
+
+    public function removeCheatForProject(Project $project)
+    {
+        return $this->availableCheats()
+            ->where('project_id', $project->id)
+            ->where('is_fired', false)
+            ->delete();
+    }
+
+    public function getAvailableCheatForProject(Project $project) : AvailableCheat {
+        return $this->availableCheats()
+            ->where('project_id', $project->id)
+            ->first();
     }
 }
