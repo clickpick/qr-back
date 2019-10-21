@@ -30,7 +30,7 @@ class VkPayResponse
 
     private function getDecodedData()
     {
-        return base64_decode($this->data);
+        return json_decode(base64_decode($this->data), true);
     }
 
     public function getOrderId() {
