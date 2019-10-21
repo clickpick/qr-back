@@ -9,7 +9,6 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 
 
-
 /**
  * App\VkPayOrder
  *
@@ -59,8 +58,8 @@ class VkPayOrder extends Model
     {
         parent::boot();
 
-        static::creating(function ($post) {
-            $post->{$post->getKeyName()} = (string)Str::uuid();
+        static::creating(function (self $model) {
+            $model->{$model->getKeyName()} = (string)Str::uuid();
         });
     }
 
@@ -77,5 +76,35 @@ class VkPayOrder extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    private function convertStatus($status) {
+        switch ($status) {
+            case 'PAID':
+                return self::PAID;
+
+            case 'HOLD':
+                return self::HOLD;
+            default:
+                return self::CREATED;
+        }
+    }
+
+    public function approve($status, $payload) {
+
+        if ($this->status === self::PAID) {
+            return;
+        }
+
+        $status = $this->convertStatus($status);
+
+        if ($status === self::CREATED) {
+            return;
+        }
+
+        $this->status = $status;
+        $this->payload = $payload;
+
+        $this->save();
     }
 }

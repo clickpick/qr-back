@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\InvalidSignatureException;
 use App\Http\Requests\OrderVkPayRequest;
 use App\Http\Requests\VkPayTransactionCallbackRequest;
 use App\Http\Resources\VkPayParamsResource;
@@ -15,8 +16,11 @@ class VkPayController extends Controller
 {
     public function makeOrder(OrderVkPayRequest $request)
     {
+
+        $activeProject = Project::whereIsActive(true)->firstOrFail();
+
         return new VkPayParamsResource(
-            VkPay::makeOrder(Auth::user(), $request->amount, VkPayOrder::DONATE)
+            VkPay::makeOrder(Auth::user(), $request->amount, VkPayOrder::DONATE, $activeProject->name)
         );
     }
 
@@ -28,7 +32,7 @@ class VkPayController extends Controller
             abort(403, 'has no cheats');
         }
 
-        $params = VkPay::makeOrder(Auth::user(), VkPayOrder::CHEAT_VALUE, VkPayOrder::CHEAT);
+        $params = VkPay::makeOrder(Auth::user(), VkPayOrder::CHEAT_VALUE, VkPayOrder::CHEAT, "{$activeProject->name}");
 
         $availableCheat = Auth::user()->getAvailableCheatForProject($activeProject);
 
@@ -39,12 +43,19 @@ class VkPayController extends Controller
 
     public function notify(VkPayTransactionCallbackRequest $request)
     {
-        info(json_encode($request->all()));
-
-        $vkPayResponse = new VkPayResponse($request);
+        try {
+            $vkPayResponse = new VkPayResponse($request);
+        } catch (InvalidSignatureException $e) {
+            abort(400);
+            return false;
+        }
 
         $orderId = $vkPayResponse->getOrderId();
 
         $vkPayOrder = VkPayOrder::findOrFail($orderId);
+
+        $vkPayOrder->approve($vkPayResponse->getStatus(), $vkPayResponse->getDecodedData());
+
+        return $vkPayResponse->successResponse();
     }
 }

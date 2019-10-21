@@ -45,10 +45,10 @@ class ProjectsTableSeeder extends Seeder
 
         $project = Project::create([
             'name' => 'Защитим снежного барса в республике Алтай',
-            'description' => 'Спасите ирбиса',
+            'description' => 'Помогите сделать местообитания снежного барса в природных парках Алтая более безопасными',
             'prize' => 'panda',
-            'goal_funds' => 2387000,
-            'raised_funds' => 1026000,
+            'goal_funds' => 3040000,
+            'raised_funds' => 273600,
             'is_active' => true,
             'status' => Project::APPROVED
         ]);

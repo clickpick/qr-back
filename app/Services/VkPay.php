@@ -20,18 +20,18 @@ class VkPay
         $this->appSecret = $appSecret;
     }
 
-    public function makeOrder(User $user, $amount, $destination)
+    public function makeOrder(User $user, $amount, $destination, $description)
     {
         $this->vkPayOrder = $user->vkPayOrders()->create([
             'amount' => $amount,
             'destination' => $destination
         ]);
 
-        return $this->createParams();
+        return $this->createParams($description);
     }
 
 
-    private function createParams()
+    private function createParams($description)
     {
         $data = [
             'amount' => $this->vkPayOrder->amount,
@@ -48,7 +48,7 @@ class VkPay
         $params = [
             'amount' => $this->vkPayOrder->amount,
             'data' => json_encode($data),
-            'description' => 'Пожертвование номер ' . $data['order_id'],
+            'description' => $description,
             'action' => 'pay-to-service',
             'merchant_id' => $this->merchantId,
         ];
