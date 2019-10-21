@@ -28,12 +28,12 @@ class VkPayResponse
         return openssl_verify($this->data, base64_decode($this->signature), file_get_contents(storage_path('app/vkpay.pem')));
     }
 
-    private function getDecodedData()
+    public function getDecodedData()
     {
         return json_decode(base64_decode($this->data), true);
     }
 
     public function getOrderId() {
-        return $this->getDecodedData()['merchant_param']['order_id'];
+        return $this->getDecodedData()['body']['merchant_param']['order_id'];
     }
 }
