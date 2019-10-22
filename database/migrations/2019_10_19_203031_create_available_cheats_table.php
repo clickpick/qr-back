@@ -23,7 +23,7 @@ class CreateAvailableCheatsTable extends Migration
             $table->foreign('project_id')->references('id')->on('projects')->onDelete('cascade');
 
             $table->uuid('vk_pay_order_id');
-            $table->foreign('vk_pay_order_id')->references('id')->on('vk_pay_orders')->onDelete('cascade');
+            $table->foreign('vk_pay_order_id')->references('id')->on('vk_pay_orders')->onDelete('cascade')->nullable();
 
             $table->unique(['user_id', 'project_id']);
 
