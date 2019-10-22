@@ -226,6 +226,13 @@ class User extends Authenticatable
             ->exists();
     }
 
+    public function hasAvailableCheatForProject(Project $project)
+    {
+        return $this->availableCheats()
+            ->where('project_id', $project->id)
+            ->exists();
+    }
+
 
     public function hasAvailableNotFiredCheatForActiveProject()
     {
