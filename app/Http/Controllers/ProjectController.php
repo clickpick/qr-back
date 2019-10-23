@@ -63,9 +63,7 @@ class ProjectController extends Controller
             return response(['data' => new ProjectKeyResource($projectKey)], 422);
         }
 
-
-        $user->activatedProjectKeys()->attach($projectKeyIdToActivate);
-        event(new ProjectKeyActivated($projectKey, $user));
+        $user->addProjectKey($projectKey);
 
         $project = $projectKey->project;
         $project->refresh();

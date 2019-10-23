@@ -91,11 +91,13 @@ class Project extends Model implements HasMedia
         'created' => ProjectCreated::class
     ];
 
-    public function projectKeys() {
+    public function projectKeys()
+    {
         return $this->hasMany(ProjectKey::class);
     }
 
-    public function projectFacts() {
+    public function projectFacts()
+    {
         return $this->hasMany(ProjectFact::class);
     }
 
@@ -118,7 +120,8 @@ class Project extends Model implements HasMedia
             });
     }
 
-    public function generateProjectKeys($count = self::KEYS_COUNT) {
+    public function generateProjectKeys($count = self::KEYS_COUNT)
+    {
 
         $minRate = 2;
 
@@ -136,8 +139,9 @@ class Project extends Model implements HasMedia
     }
 
 
-    public function getRandomProjectKey() {
-        $dispersion = $this->projectKeys->reduce(function($carry, ProjectKey $projectKey) {
+    public function getRandomProjectKey()
+    {
+        $dispersion = $this->projectKeys->reduce(function ($carry, ProjectKey $projectKey) {
             return array_merge($carry, array_fill(1, $projectKey->drop_rate * 100, $projectKey->id));
         }, []);
 
@@ -147,7 +151,20 @@ class Project extends Model implements HasMedia
         return ProjectKey::find($projectKeyId);
     }
 
-    public function checkIsFinished() {
+    public function getRandomProjectKeyExcept(array $ids)
+    {
+        $dispersion = $this->projectKeys()->whereNotIn('id', $ids)->get()->reduce(function ($carry, ProjectKey $projectKey) {
+            return array_merge($carry, array_fill(1, $projectKey->drop_rate * 100, $projectKey->id));
+        }, []);
+
+
+        $projectKeyId = Arr::random($dispersion);
+
+        return ProjectKey::find($projectKeyId);
+    }
+
+    public function checkIsFinished()
+    {
         $keysCount = $this->projectKeys()->count();
 
 
@@ -167,7 +184,8 @@ class Project extends Model implements HasMedia
         }
     }
 
-    public function sendFinishedNotification() {
+    public function sendFinishedNotification()
+    {
         $usersIdsObject = DB::table('activated_project_key_user')
             ->where('project_keys.project_id', $this->id)
             ->join('project_keys', 'activated_project_key_user.project_key_id', '=', 'project_keys.id')
@@ -189,8 +207,9 @@ class Project extends Model implements HasMedia
 пожертвовать средства, которые пойдут на этот или другие проекты этого фонда.");
     }
 
-    public function activate() {
-        DB::transaction(function() {
+    public function activate()
+    {
+        DB::transaction(function () {
             Project::whereIsActive(true)->update([
                 'is_active' => false
             ]);
@@ -200,7 +219,8 @@ class Project extends Model implements HasMedia
         });
     }
 
-    public function addFunds($value) {
+    public function addFunds($value)
+    {
         $this->raised_funds += $value;
         $this->save();
     }

@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Events\ProjectKeyActivated;
 use App\Events\UserCreated;
 use App\Services\VkClient;
 use Eloquent;
@@ -261,5 +262,11 @@ class User extends Authenticatable
         return $this->availableCheats()
             ->where('project_id', $project->id)
             ->first();
+    }
+
+
+    public function addProjectKey(ProjectKey $projectKey) {
+        $this->activatedProjectKeys()->attach($projectKey->id);
+        event(new ProjectKeyActivated($projectKey, $this));
     }
 }

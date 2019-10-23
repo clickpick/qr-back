@@ -6,6 +6,7 @@ use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 
 /**
  * App\AvailableCheat
@@ -28,6 +29,8 @@ use Illuminate\Support\Carbon;
  * @mixin Eloquent
  * @property string $vk_pay_order_id
  * @method static Builder|AvailableCheat whereVkPayOrderId($value)
+ * @property-read User $user
+ * @property-read Project $project
  */
 class AvailableCheat extends Model
 {
@@ -35,8 +38,36 @@ class AvailableCheat extends Model
         'project_id'
     ];
 
-    public function attachVkPayOrderId($vkPayOrderId) {
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function project()
+    {
+        return $this->belongsTo(Project::class);
+    }
+
+    public function attachVkPayOrderId($vkPayOrderId)
+    {
         $this->vk_pay_order_id = $vkPayOrderId;
         $this->save();
+    }
+
+
+    public function activate() : ProjectKey
+    {
+        $activatedKeys = $this->user->getActivatedProjectKeys($this->project);
+
+        $projectKey = $this->project->getRandomProjectKeyExcept($activatedKeys->pluck('id')->toArray());
+
+        DB::transaction(function() use ($projectKey) {
+            $this->user->addProjectKey($projectKey);
+
+            $this->is_fired = true;
+            $this->save();
+        });
+
+        return $projectKey;
     }
 }

@@ -33,6 +33,7 @@ use Illuminate\Support\Str;
  * @mixin Eloquent
  * @property string $destination
  * @method static Builder|VkPayOrder whereDestination($value)
+ * @property-read AvailableCheat $availableCheat
  */
 class VkPayOrder extends Model
 {
@@ -78,7 +79,13 @@ class VkPayOrder extends Model
         return $this->belongsTo(User::class);
     }
 
-    private function convertStatus($status) {
+    public function availableCheat()
+    {
+        return $this->hasOne(AvailableCheat::class);
+    }
+
+    private function convertStatus($status)
+    {
         switch ($status) {
             case 'PAID':
                 return self::PAID;
@@ -90,7 +97,12 @@ class VkPayOrder extends Model
         }
     }
 
-    public function approve($status, $payload) {
+    public function isDone() {
+        return $this->status === self::PAID || $this->status === self::HOLD;
+    }
+
+    public function approve($status, $payload)
+    {
 
         if ($this->status === self::PAID) {
             return;

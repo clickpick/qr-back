@@ -17,5 +17,7 @@ Route::post('notifications', 'MeController@setNotificationsAreEnabled');
 Route::post('vk-pay-order', 'VkPayController@makeOrder');
 Route::post('vk-pay-cheat-order', 'VkPayController@makeCheatOrder');
 
+Route::post('activate-cheat','AvailableCheatController@activateCheat');
+
 Route::post('request-funding', 'Admin\ProjectController@store');
 
