@@ -168,15 +168,15 @@ class Project extends Model implements HasMedia
         $keysCount = $this->projectKeys()->count();
 
 
-        $winnersCount = DB::table('activated_project_key_user')
+        $winners = DB::table('activated_project_key_user')
             ->join('project_keys', 'activated_project_key_user.project_key_id', '=', 'project_keys.id')
             ->where('project_keys.project_id', $this->id)
             ->having(DB::raw('count(activated_project_key_user.id)'), '>=', $keysCount)
             ->groupBy('activated_project_key_user.user_id')
             ->select(DB::raw('count(activated_project_key_user.id) as count'))
-            ->count();
+            ->get();
 
-        if ($winnersCount >= $this->winners_count) {
+        if ($winners->count() >= $this->winners_count) {
             $this->is_finished = true;
             $this->save();
 
