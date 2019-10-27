@@ -122,19 +122,29 @@ class Project extends Model implements HasMedia
 
     public function generateProjectKeys($count = self::KEYS_COUNT)
     {
-
         $minRate = 2;
-
-        $otherRate = round((100 - $minRate) / ($count - 1), 2);
-
-        $randOrder = rand(0, $count);
+        $rate = $minRate;
+        $sum = 0;
 
         for ($i = 0; $i < $count; $i++) {
+
+            if ($i > 0 && $i < $count - 1) {
+                $maxRate = 100 - $sum - $minRate * ($count - $i);
+
+                $rate = rand($minRate, $maxRate);
+            }
+
+            if ($i === $count - 1) {
+                $rate = 100 - $sum;
+            }
+
             $this->projectKeys()->create([
                 'value' => Str::random(1),
                 'order' => $i,
-                'drop_rate' => $i === $randOrder ? $minRate : $otherRate
+                'drop_rate' => $rate
             ]);
+
+            $sum += $rate;
         }
     }
 
