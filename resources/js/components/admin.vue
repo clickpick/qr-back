@@ -53,6 +53,12 @@
             <el-form-item label="Фон" prop="link">
               <v-upload v-model="current.banner" />
             </el-form-item>
+            <el-form-item label="Состояние">
+              <div class="el-switch-group">
+                <el-switch v-model="current.is_active" active-text="Активный" />
+                <el-switch v-model="current.is_finished" active-text="Закончен" />
+              </div>
+            </el-form-item>
           </el-form>
           <span slot="footer">
             <el-button @click="reset">Отмена</el-button>
@@ -192,6 +198,16 @@ export default createComponent({
 .wrapper {
   max-width: 900px;
   margin: 0 auto;
+}
+
+.el-switch-group {
+  display: table;
+  clear: both;
+
+  .el-switch {
+    display: block;
+    margin-top: 12px;
+  }
 }
 
 .el-table__row {
