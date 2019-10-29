@@ -1920,11 +1920,6 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 //
 //
 //
-//
-//
-//
-//
-//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -2037,8 +2032,6 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.common.js");
-/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(vue__WEBPACK_IMPORTED_MODULE_0__);
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(source, true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(source).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
@@ -2150,7 +2143,11 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
-
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "v-fields",
   props: {
@@ -2159,18 +2156,26 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       "default": false
     },
     project: {
+      type: Object,
       required: true
     }
   },
   created: function created() {
     this.$_project = this.project;
+    this.$_nullableName = " ";
   },
   watch: {
     project: {
       deep: true,
       immediate: true,
       handler: function handler(val) {
-        vue__WEBPACK_IMPORTED_MODULE_0___default.a.set(this, "$_project", _objectSpread({}, this.$_project, {}, val));
+        if ("id" in val && val.id !== null) {
+          if (this.$_project && this.$_project.id === val.id) {
+            this.$_project = _objectSpread({}, this.$_project, {}, val);
+          } else {
+            this.$_project = val;
+          }
+        }
       }
     }
   },
@@ -2219,7 +2224,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n.main {\n  position: relative;\n  flex-grow: 1;\n}\n.main .mdc-top-app-bar--fixed {\n  top: 0;\n}\n.main .mdc-typography--body2 {\n  padding: 16px;\n}\n.balmui-container--flex {\n  display: flex;\n  height: 100vh;\n}\n.mdc-data-table__cell:nth-child(1) {\n  text-align: right;\n}\n.mdc-data-table__cell:nth-child(2) {\n  width: 8vw;\n}\n.mdc-data-table__cell:nth-child(3) {\n  width: 20vw;\n}\n.mdc-data-table__cell:nth-child(4) {\n  width: 6vw;\n  text-align: right;\n}\n.mdc-data-table__cell:nth-child(5) {\n  width: 12vw;\n}\n.mdc-data-table__cell:nth-child(6) {\n  width: 22vw;\n}\n.mdc-dialog__surface {\n  width: 100vw;\n  overflow: hidden;\n}\n.preview-list {\n  margin: 0;\n  padding: 16px 0;\n  width: 100%;\n  list-style: none;\n}\n.preview-list .preview {\n  display: block;\n  width: 100%;\n}\n", ""]);
+exports.push([module.i, "\n.mdc-top-app-bar__navigation-icon {\n  display: none;\n}\n.main {\n  position: relative;\n  flex-grow: 1;\n}\n.main .mdc-top-app-bar--fixed {\n  top: 0;\n}\n.main .mdc-typography--body2 {\n  padding: 16px;\n}\n.balmui-container--flex {\n  display: flex;\n  height: 100vh;\n}\n.mdc-data-table__cell:nth-child(1) {\n  text-align: right;\n}\n.mdc-data-table__cell:nth-child(2) {\n  width: 8vw;\n}\n.mdc-data-table__cell:nth-child(3) {\n  width: 20vw;\n}\n.mdc-data-table__cell:nth-child(4) {\n  width: 6vw;\n  text-align: right;\n}\n.mdc-data-table__cell:nth-child(5) {\n  width: 12vw;\n}\n.mdc-data-table__cell:nth-child(6) {\n  width: 22vw;\n}\n.mdc-dialog__surface {\n  width: 100vw;\n  overflow: hidden;\n}\n.preview-list {\n  margin: 0;\n  padding: 16px 0;\n  width: 100%;\n  list-style: none;\n}\n.preview-list .preview {\n  display: block;\n  width: 100%;\n}\n", ""]);
 
 // exports
 
@@ -23162,30 +23167,9 @@ var render = function() {
                 "nav-id": "menu",
                 id: "menu",
                 fixed: ""
-              },
-              scopedSlots: _vm._u([
-                {
-                  key: "nav-icon",
-                  fn: function() {
-                    return [
-                      _c(
-                        "ui-icon",
-                        {
-                          on: {
-                            click: function($event) {
-                              return _vm.$router.back()
-                            }
-                          }
-                        },
-                        [_vm._v("arrow_back")]
-                      )
-                    ]
-                  },
-                  proxy: true
-                }
-              ])
+              }
             },
-            [_vm._v("\n      QR\n    ")]
+            [_vm._v("QR")]
           ),
           _vm._v(" "),
           _c(
@@ -23348,7 +23332,7 @@ var render = function() {
     [
       _c("v-provider", {
         staticClass: "field",
-        attrs: { name: "name", rules: "required|alpha_spaces" },
+        attrs: { name: _vm.$_nullableName, rules: "required|alpha_spaces" },
         scopedSlots: _vm._u([
           {
             key: "default",
@@ -23390,7 +23374,7 @@ var render = function() {
       _vm._v(" "),
       _c("v-provider", {
         staticClass: "field",
-        attrs: { name: "description", rules: "required" },
+        attrs: { name: _vm.$_nullableName, rules: "required" },
         scopedSlots: _vm._u([
           {
             key: "default",
@@ -23435,7 +23419,10 @@ var render = function() {
         ? [
             _c("v-provider", {
               staticClass: "field",
-              attrs: { name: "donate", rules: "required|numeric|min_value:0" },
+              attrs: {
+                name: _vm.$_nullableName,
+                rules: "required|numeric|min_value:0"
+              },
               scopedSlots: _vm._u(
                 [
                   {
@@ -23484,7 +23471,7 @@ var render = function() {
       _vm._v(" "),
       _c("v-provider", {
         staticClass: "field",
-        attrs: { name: "prize", rules: "required" },
+        attrs: { name: _vm.$_nullableName, rules: "required" },
         scopedSlots: _vm._u([
           {
             key: "default",
@@ -23528,7 +23515,7 @@ var render = function() {
         ? [
             _c("v-provider", {
               staticClass: "field",
-              attrs: { name: "link", rules: "required" },
+              attrs: { name: _vm.$_nullableName, rules: "required" },
               scopedSlots: _vm._u(
                 [
                   {
@@ -23577,7 +23564,7 @@ var render = function() {
       _vm._v(" "),
       _c("v-provider", {
         staticClass: "field",
-        attrs: { name: "contact", rules: "required" },
+        attrs: { name: _vm.$_nullableName, rules: "required" },
         scopedSlots: _vm._u([
           {
             key: "default",

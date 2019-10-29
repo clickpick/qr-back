@@ -1,12 +1,7 @@
 <template>
   <div class="balmui-container balmui-container--flex">
     <main :class="[$tt('body1'), 'main']">
-      <ui-top-app-bar content-selector=".main" nav-id="menu" id="menu" fixed>
-        <template #nav-icon>
-          <ui-icon @click="$router.back()">arrow_back</ui-icon>
-        </template>
-        QR
-      </ui-top-app-bar>
+      <ui-top-app-bar content-selector=".main" nav-id="menu" id="menu" fixed>QR</ui-top-app-bar>
       <div :class="$tt('body2')">
         <h3 :class="$tt('headline6')">Текущий проект</h3>
         <ui-table :data="active" :thead="projects.head" :tbody="projects.schema" fullwidth></ui-table>
@@ -148,6 +143,10 @@ export default {
 </script>
 
 <style>
+.mdc-top-app-bar__navigation-icon {
+  display: none;
+}
+
 .main {
   position: relative;
   flex-grow: 1;

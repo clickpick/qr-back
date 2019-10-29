@@ -105,6 +105,7 @@ export default {
 
   min-height: 100vh;
   padding: 32px;
+  box-sizing: border-box;
 }
 
 .mdc-card {

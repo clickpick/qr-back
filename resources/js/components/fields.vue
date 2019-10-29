@@ -1,6 +1,11 @@
 <template>
   <fieldset>
-    <v-provider name="name" rules="required|alpha_spaces" v-slot="{ errors }" class="field">
+    <v-provider
+      :name="$_nullableName"
+      rules="required|alpha_spaces"
+      v-slot="{ errors }"
+      class="field"
+    >
       <ui-textfield
         outlined
         id="name"
@@ -15,7 +20,7 @@
       >{{ errors[0] }}</ui-textfield-helptext>
     </v-provider>
 
-    <v-provider name="description" rules="required" v-slot="{ errors }" class="field">
+    <v-provider :name="$_nullableName" rules="required" v-slot="{ errors }" class="field">
       <ui-textfield
         outlined
         type="textarea"
@@ -33,7 +38,7 @@
 
     <template v-if="additional">
       <v-provider
-        name="donate"
+        :name="$_nullableName"
         rules="required|numeric|min_value:0"
         v-slot="{ errors }"
         class="field"
@@ -53,7 +58,7 @@
       </v-provider>
     </template>
 
-    <v-provider name="prize" rules="required" v-slot="{ errors }" class="field">
+    <v-provider :name="$_nullableName" rules="required" v-slot="{ errors }" class="field">
       <ui-textfield
         outlined
         id="prize"
@@ -69,7 +74,7 @@
     </v-provider>
 
     <template v-if="additional">
-      <v-provider name="link" rules="required" v-slot="{ errors }" class="field">
+      <v-provider :name="$_nullableName" rules="required" v-slot="{ errors }" class="field">
         <ui-textfield
           outlined
           id="link"
@@ -85,7 +90,7 @@
       </v-provider>
     </template>
 
-    <v-provider name="contact" rules="required" v-slot="{ errors }" class="field">
+    <v-provider :name="$_nullableName" rules="required" v-slot="{ errors }" class="field">
       <ui-textfield
         outlined
         type="textarea"
@@ -104,8 +109,6 @@
 </template>
 
 <script>
-import Vue from "vue";
-
 export default {
   name: "v-fields",
   props: {
@@ -114,18 +117,26 @@ export default {
       default: false
     },
     project: {
+      type: Object,
       required: true
     }
   },
   created() {
     this.$_project = this.project;
+    this.$_nullableName = " ";
   },
   watch: {
     project: {
       deep: true,
       immediate: true,
       handler(val) {
-        Vue.set(this, "$_project", { ...this.$_project, ...val });
+        if ("id" in val && val.id !== null) {
+          if (this.$_project && this.$_project.id === val.id) {
+            this.$_project = { ...this.$_project, ...val };
+          } else {
+            this.$_project = val;
+          }
+        }
       }
     }
   },
