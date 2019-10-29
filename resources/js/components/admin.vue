@@ -4,7 +4,8 @@
       <el-table :data="projects" :row-class-name="markStatus" @row-click="edit" v-loading="loading">
         <el-table-column prop="name" label="Название" />
         <el-table-column prop="percent_funds" label="Собрано" />
-        <el-table-column prop="winners_count" label="Победителей" />
+        <!-- <el-table-column prop="winners_count" label="Победителей" /> -->
+        <el-table-column prop="status" label="Статус" :formatter="mapStatus" />
         <el-table-column prop="updated_at" label="Обновлен" />
       </el-table>
     </el-main>
@@ -20,6 +21,16 @@
             </el-form-item>
             <el-form-item label="Полное описание" prop="bid_description">
               <el-input v-model="current.big_description" type="textarea" autocomplete="off" />
+            </el-form-item>
+            <el-form-item label="Количество призовых мест">
+              <el-input
+                v-model.number="current.winners_count"
+                type="number"
+                autocomplete="off"
+                min="1"
+              >
+                <template slot="append">шт.</template>
+              </el-input>
             </el-form-item>
             <el-form-item label="Сумма сбора" prop="goal_funds">
               <el-input
@@ -53,15 +64,20 @@
             <el-form-item label="Фон" prop="link">
               <v-upload v-model="current.banner" />
             </el-form-item>
-            <el-form-item label="Состояние">
-              <div class="el-switch-group">
-                <el-switch v-model="current.is_active" active-text="Активный" />
-                <el-switch v-model="current.is_finished" active-text="Закончен" />
-              </div>
+            <el-form-item label="Статус">
+              <el-select v-model="current.status" placeholder="Выберите">
+                <el-option
+                  v-for="item in statuses"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                ></el-option>
+              </el-select>
             </el-form-item>
           </el-form>
           <span slot="footer">
             <el-button @click="reset">Отмена</el-button>
+            <el-button @click="activate">Активировать</el-button>
             <el-button type="primary" @click="save">Сохранить</el-button>
           </span>
         </el-dialog>
@@ -138,11 +154,15 @@ export default createComponent({
       });
     };
 
-    const save = () => {
+    const dispatch = () => {
       const index = projects.value.findIndex((project) => {
         return project.id === current.value.id;
       });
       projects.value.splice(index, 1, current.value);
+    };
+
+    const save = () => {
+      dispatch();
 
       const model = Object.assign({}, current.value);
       model.banner = model.banner.raw || null;
@@ -154,7 +174,7 @@ export default createComponent({
       ctx.root.$axios.post(`/admin/api/projects/${model.id}`, data).then(() => {
         ctx.root.$notify({
           title: "Успешно",
-          message: `Проект "${model.name}" сохранен успешено`,
+          message: `Проект "${model.name}" сохранен`,
           type: "success"
         });
       }).catch((e) => {
@@ -173,11 +193,59 @@ export default createComponent({
       modal.value = false;
     };
 
+    const activate = () => {
+      const model = Object.assign({}, current.value);
+
+      ctx.root.$confirm("Вы хотите активировать проект?", "Внимание", {
+        confirmButtonText: "Да",
+        cancelButtonText: "Отмена",
+        type: "warning"
+      }).then(() => {
+        projects.value.forEach((project) => {
+          project.is_active = false;
+        });
+        current.value.is_active = true;
+
+        dispatch();
+
+        ctx.root.$axios.post(`/admin/api/projects/${model.id}/activate`).then(() => {
+          ctx.root.$notify({
+            title: "Успешно",
+            message: `Проект "${model.name}" активирован`,
+            type: "success"
+          });
+        }).catch((e) => {
+          ctx.root.$notify({
+            title: "Ошибка",
+            message: `${e}`,
+            type: "error"
+          });
+        });
+      });
+    };
+
     const rules = {};
 
     onBeforeMount(() => {
       load();
     });
+
+    const statuses = ref(Object.freeze([{
+      value: 0,
+      label: "На рассмотрении"
+    }, {
+      value: 1,
+      label: "Одобрен"
+    }, {
+      value: 2,
+      label: "Отклонён"
+    }]));
+
+    const mapStatus = (project) => {
+      return statuses.value.find((status) => {
+        return project.status === status.value;
+      }).label;
+    };
 
     return {
       current,
@@ -186,9 +254,12 @@ export default createComponent({
       edit,
       save,
       reset,
+      activate,
       rules,
       projects,
-      markStatus
+      markStatus,
+      mapStatus,
+      statuses
     }
   }
 });
