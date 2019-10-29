@@ -7,7 +7,7 @@ window._ = require("lodash");
  */
 
 window.axios = require("axios");
-
+// window.axios.defaults.baseURL = "https://qr-game.ezavalishin.ru";
 window.axios.defaults.headers.common["X-Requested-With"] = "XMLHttpRequest";
 
 const BootstrapToProto = {
@@ -37,11 +37,11 @@ import Vue from "vue";
 
 Vue.use(BootstrapToProto);
 
-import BalmUI from "balm-ui";
-import BalmUIPlus from "balm-ui/dist/balm-ui-plus";
+import ElementUI from "element-ui";
+import locale from "element-ui/lib/locale/lang/ru-RU";
+import "element-ui/lib/theme-chalk/index.css";
 
-Vue.use(BalmUI);
-Vue.use(BalmUIPlus);
+Vue.use(ElementUI, { locale });
 
 import { extend, ValidationProvider } from "vee-validate";
 import * as rules from "vee-validate/dist/rules";
@@ -57,7 +57,14 @@ for (const rule in rules) {
 
 Vue.component("v-provider", ValidationProvider);
 
-import Fields from "./components/fields.vue";
+import VueCompositionApi from "@vue/composition-api";
 
-Vue.component("v-fields", Fields);
+Vue.use(VueCompositionApi);
 
+import VUpload from "./components/upload.vue";
+
+Vue.component("v-upload", VUpload);
+
+import Admin from "./components/admin.vue";
+
+Vue.component("v-admin", Admin);

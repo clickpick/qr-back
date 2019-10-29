@@ -1,204 +1,237 @@
 <template>
-  <div class="balmui-container balmui-container--flex">
-    <main :class="[$tt('body1'), 'main']">
-      <ui-top-app-bar content-selector=".main" nav-id="menu" id="menu" fixed>QR</ui-top-app-bar>
-      <div :class="$tt('body2')">
-        <h3 :class="$tt('headline6')">Текущий проект</h3>
-        <ui-table :data="active" :thead="projects.head" :tbody="projects.schema" fullwidth></ui-table>
-        <h3 :class="$tt('headline6')">Все проекты</h3>
-        <ui-table :data="projects.data" :thead="projects.head" :tbody="projects.schema" fullwidth></ui-table>
-      </div>
-    </main>
-    <ui-dialog :open="open" @confirm="onUpdateProject">
-      <ui-dialog-title>Изменение заявки</ui-dialog-title>
-      <ui-dialog-content>
-        <v-fields :project="project" ref="fields" :additional="false" />
-        <ui-text-divider>Постер (иконка)</ui-text-divider>
-        <ui-file accept="image/*" preview @change="$_setPoster" text="Загрузить" />
-        <transition-group class="preview-list" name="list" tag="ul">
-          <li class="item" v-if="project.poster" :key="project.poster.uuid">
-            <div class="inner">
-              <img class="preview" :src="project.poster.previewSrc" />
-              <span class="name">{{ project.poster.name }}</span>
-            </div>
-          </li>
-        </transition-group>
-        <ui-text-divider>Баннер (подложка)</ui-text-divider>
-        <ui-file accept="image/*" preview @change="$_setBanner" text="Загрузить" />
-        <transition-group class="preview-list" name="list" tag="ul">
-          <li class="item" v-if="project.banner" :key="project.banner.uuid">
-            <div class="inner">
-              <img class="preview" :src="project.banner.previewSrc" />
-              <span class="name">{{ project.banner.name }}</span>
-            </div>
-          </li>
-        </transition-group>
-      </ui-dialog-content>
-      <ui-dialog-actions acceptText="Обновить" cancelText="Отмена" />
-    </ui-dialog>
-  </div>
+  <el-container>
+    <el-main class="wrapper">
+      <el-table :data="projects" :row-class-name="markStatus" @row-click="edit" v-loading="loading">
+        <el-table-column prop="name" label="Название" />
+        <el-table-column prop="percent_funds" label="Собрано" />
+        <el-table-column prop="winners_count" label="Победителей" />
+        <el-table-column prop="updated_at" label="Обновлен" />
+      </el-table>
+    </el-main>
+    <keep-alive>
+      <template v-if="current">
+        <el-dialog title="Редактирование" :visible.sync="modal">
+          <el-form :model="current" :rules="rules" status-icon>
+            <el-form-item label="Название" prop="name">
+              <el-input v-model="current.name" autocomplete="off" />
+            </el-form-item>
+            <el-form-item label="Короткое описание" prop="description">
+              <el-input v-model="current.description" type="textarea" autocomplete="off" />
+            </el-form-item>
+            <el-form-item label="Полное описание" prop="bid_description">
+              <el-input v-model="current.big_description" type="textarea" autocomplete="off" />
+            </el-form-item>
+            <el-form-item label="Сумма сбора" prop="goal_funds">
+              <el-input
+                v-model.number="current.goal_funds"
+                type="number"
+                autocomplete="off"
+                min="0"
+              >
+                <template slot="append">₽</template>
+              </el-input>
+            </el-form-item>
+            <el-form-item label="Уже собрано" prop="raised_funds">
+              <el-input
+                v-model.number="current.raised_funds"
+                type="number"
+                autocomplete="off"
+                min="0"
+              >
+                <template slot="append">₽</template>
+              </el-input>
+            </el-form-item>
+            <el-form-item label="Ссылка" prop="link">
+              <el-input v-model="current.link" type="url" autocomplete="off" />
+            </el-form-item>
+            <el-form-item label="Контакты" prop="contact">
+              <el-input v-model="current.contact" type="textarea" autocomplete="off" />
+            </el-form-item>
+            <el-form-item label="Иконка" prop="link">
+              <v-upload v-model="current.poster" />
+            </el-form-item>
+            <el-form-item label="Фон" prop="link">
+              <v-upload v-model="current.banner" />
+            </el-form-item>
+          </el-form>
+          <span slot="footer">
+            <el-button @click="reset">Отмена</el-button>
+            <el-button type="primary" @click="save">Сохранить</el-button>
+          </span>
+        </el-dialog>
+      </template>
+    </keep-alive>
+  </el-container>
 </template>
 
 <script>
-import { reactive as project } from "../model/project";
-import { default as EventBus } from "vue";
+import createFormData from "object-to-formdata";
+import { format, parseISO } from "date-fns";
+import { ru } from "date-fns/locale"
+import { createComponent, ref, onBeforeMount } from "@vue/composition-api";
 
-export default {
+export default createComponent({
   name: "v-admin",
-  data() {
-    return {
-      open: null,
-      active: [project],
-      project,
-      projects: {
-        data: [project],
-        head: [
-          "ID",
-          "Название",
-          "Описание",
-          "Сумма сбора",
-          "Приз",
-          "Ссылка на фонд",
-          "Обратная связь"
-        ],
-        schema: ["id", "name", "description", "goal_funds", "prize", "link", "contact"]
-      }
+  setup(props, ctx) {
+    const projects = ref(null);
+    const loading = ref(false);
+
+    const formatDate = (date) => {
+      return format(parseISO(date), "dd MMMM yyyy", { locale: ru });
     };
-  },
-  mounted() {
-    this.$_registerClick();
-  },
-  updated() {
-    this.$_registerClick();
-  },
-  created() {
-    this.$axios.get("/admin/api/projects").then((response) => {
-      const [active, other] = response.data.data.reduce((result, item) => {
-        if (item.is_active) {
-          result[0].push(item);
-        } else {
-          result[1].push(item);
-        }
 
-        return result;
-      }, [[], []]);
+    const load = () => {
+      loading.value = true;
 
-      this.$set(this, "active", active);
-      this.$set(this.projects, "data", other);
-    });
+      ctx.root.$axios.get("/admin/api/projects").then(({ data: { data }}) => {
+        loading.value = false;
 
-    this.bus = new EventBus();
-    this.bus.$on("row.click", (id) => {
-      const project = [...this.projects.data, ...this.active].find((item) => {
-        return +item.id === +id;
+        projects.value = data.map((project) => {
+          project.updated_at = formatDate(project.updated_at);
+          project.percent_funds = `${Math.floor(100 * (project.raised_funds || 0) / (project.goal_funds || 1))}%`;
+          project.poster = {
+            url: project.poster_url,
+            name: "Иконка"
+          };
+          project.banner = {
+            url: project.banner_url,
+            name: "Фон"
+          };
+          return project;
+        }).sort((a, b) => b.id - a.id);
+      });
+    };
+
+    const markStatus = ({ row }) => {
+      if (row.is_active && row.is_finished) {
+        return "status-gone";
+      }
+
+      if (row.is_active) {
+        return "status-active";
+      }
+
+      if (row.is_finished) {
+        return "status-finished";
+      }
+
+      return "";
+    };
+
+    const current = ref(null);
+    const modal = ref(false);
+
+    let backup = null;
+
+    const edit = (project) => {
+      backup = project;
+      current.value = Object.assign({}, project);
+
+      ctx.root.$nextTick(() => {
+        modal.value = true;
+      });
+    };
+
+    const save = () => {
+      const index = projects.value.findIndex((project) => {
+        return project.id === current.value.id;
+      });
+      projects.value.splice(index, 1, current.value);
+
+      const model = Object.assign({}, current.value);
+      model.banner = model.banner.raw || null;
+      model.poster = model.poster.raw || null;
+
+      const data = createFormData(Object.freeze(model));
+      data.append("_method", "PUT");
+
+      ctx.root.$axios.post(`/admin/api/projects/${model.id}`, data).then(() => {
+        ctx.root.$notify({
+          title: "Успешно",
+          message: `Проект "${model.name}" сохранен успешено`,
+          type: "success"
+        });
+      }).catch((e) => {
+        ctx.root.$notify({
+          title: "Ошибка",
+          message: `${e}`,
+          type: "error"
+        });
       });
 
-      if (project) {
-        this.$set(this, "project", project);
-        this.open = true;
-      }
+      modal.value = false;
+    };
+
+    const reset = () => {
+      current.value = backup;
+      modal.value = false;
+    };
+
+    const rules = {};
+
+    onBeforeMount(() => {
+      load();
     });
-  },
-  methods: {
-    $_registerClick() {
-      Array.from(this.$el.getElementsByClassName("mdc-data-table__row")).forEach((el) => {
-        const id = el.getElementsByClassName("mdc-data-table__cell")[0].textContent;
-        el.onclick = () => this.bus.$emit("row.click", id);
-      });
-    },
-    $_setPoster(files) {
-      if (files && files.length && files[0]) {
-        this.$set(this.project, "poster", files[0]);
-      }
-    },
-    $_setBanner(files) {
-      if (files && files.length && files[0]) {
-        this.$set(this.project, "banner", files[0]);
-      }
-    },
-    onUpdateProject(result) {
-      this.open = false;
 
-      if (result) {
-        const data = new FormData();
-        const fields = this.$refs.fields.get();
+    return {
+      current,
+      loading,
+      modal,
+      edit,
+      save,
+      reset,
+      rules,
+      projects,
+      markStatus
+    }
+  }
+});
+</script>
 
-        const has = Object.prototype.hasOwnProperty;
-        for (const prop in fields) {
-          if (has.call(fields, prop)) {
-            data.append(prop, fields[prop] || null);
-          }
+<style lang="scss">
+.wrapper {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.el-table__row {
+  &.status-gone {
+    background-color: #e3f2fd;
+  }
+
+  &.status-finished {
+    background-color: #eeeeee;
+  }
+
+  &.status-active {
+    background-color: #e8f5e9;
+  }
+}
+
+.el-table--enable-row-hover {
+  .el-table__body {
+    .el-table__row {
+      &.status-gone {
+        &,
+        &:hover > td {
+          background-color: #e3f2fd;
         }
+      }
 
-        data.append("poster", this.project.poster ? this.project.poster.sourceFile : null);
-        data.append("banner", this.project.banner ? this.project.banner.sourceFile : null);
+      &.status-finished {
+        &,
+        &:hover > td {
+          background-color: #eeeeee;
+        }
+      }
 
-        data.append("_method", "PUT");
-
-        this.$axios.post(`/admin/api/projects/${this.project.id}`, data);
+      &.status-active {
+        &,
+        &:hover > td {
+          background-color: #e8f5e9;
+        }
       }
     }
   }
-}
-</script>
-
-<style>
-.mdc-top-app-bar__navigation-icon {
-  display: none;
-}
-
-.main {
-  position: relative;
-  flex-grow: 1;
-}
-
-.main .mdc-top-app-bar--fixed {
-  top: 0;
-}
-
-.main .mdc-typography--body2 {
-  padding: 16px;
-}
-
-.balmui-container--flex {
-  display: flex;
-  height: 100vh;
-}
-
-.mdc-data-table__cell:nth-child(1) {
-  text-align: right;
-}
-.mdc-data-table__cell:nth-child(2) {
-  width: 8vw;
-}
-.mdc-data-table__cell:nth-child(3) {
-  width: 20vw;
-}
-.mdc-data-table__cell:nth-child(4) {
-  width: 6vw;
-  text-align: right;
-}
-.mdc-data-table__cell:nth-child(5) {
-  width: 12vw;
-}
-.mdc-data-table__cell:nth-child(6) {
-  width: 22vw;
-}
-
-.mdc-dialog__surface {
-  width: 100vw;
-  overflow: hidden;
-}
-
-.preview-list {
-  margin: 0;
-  padding: 16px 0;
-  width: 100%;
-  list-style: none;
-}
-
-.preview-list .preview {
-  display: block;
-  width: 100%;
 }
 </style>

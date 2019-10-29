@@ -26,5 +26,5 @@ Route::prefix('admin')->middleware('auth')->group(function() {
 Route::post('request-funding', 'Admin\ProjectController@store');
 
 Route::get('/', function () {
-    return view('index');
+    return redirect('admin/');
 });
