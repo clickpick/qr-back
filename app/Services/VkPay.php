@@ -47,7 +47,8 @@ class VkPay
 
 
         $params = [
-            'amount' => $this->vkPayOrder->amount,
+//            'amount' => $this->vkPayOrder->amount,
+            'amount' => 1, // todo temove
             'data' => json_encode($data),
             'description' => $description,
             'action' => 'pay-to-service',
