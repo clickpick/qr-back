@@ -34,7 +34,8 @@ class VkPay
     private function createParams($description)
     {
         $data = [
-            'amount' => $this->vkPayOrder->amount,
+//            'amount' => $this->vkPayOrder->amount,
+            'amount' => 1, // todo remove
             'currency' => 'RUB',
             'order_id' => $this->vkPayOrder->id,
             'ts' => time()
