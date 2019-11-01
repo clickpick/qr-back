@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\PostStoryRequest;
 use App\Http\Requests\SetNotificationsAreEnabledRequest;
 use App\Http\Resources\UserResource;
 use App\Project;
@@ -34,5 +35,14 @@ class MeController extends Controller
         $user->save();
 
         return new UserResource($user);
+    }
+
+    public function postStory(PostStoryRequest $request)
+    {
+        $user = Auth::user();
+
+        $user->postStory($request->image, $request->upload_url);
+
+        abort(204);
     }
 }

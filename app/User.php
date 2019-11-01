@@ -16,6 +16,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Spatie\Regex\Regex;
+use Intervention\Image\Facades\Image;
 
 /**
  * App\User
@@ -268,5 +269,11 @@ class User extends Authenticatable
     public function addProjectKey(ProjectKey $projectKey) {
         $this->activatedProjectKeys()->attach($projectKey->id);
         event(new ProjectKeyActivated($projectKey, $this));
+    }
+
+    public function postStory($base64Image, $uploadUrl)
+    {
+        $image = Image::make($base64Image);
+        (new VkClient())->postStory($uploadUrl, $image);
     }
 }

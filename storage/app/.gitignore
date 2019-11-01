@@ -3,4 +3,6 @@
 !public/
 !seed/
 !seed/*
+!stories/
+!stories/*
 !.gitignore

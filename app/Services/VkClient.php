@@ -3,7 +3,10 @@
 namespace App\Services;
 
 use App\Jobs\DisableNotificationForVkUser;
+use GuzzleHttp\Client;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
+use Intervention\Image\Image;
 use VK\Client\VKApiClient;
 
 class VkClient {
@@ -47,5 +50,29 @@ class VkClient {
                 DisableNotificationForVkUser::dispatch($item['user_id']);
             });
         });
+    }
+
+    /**
+     * @param $uploadUrl
+     * @param $image
+     */
+    public function postStory($uploadUrl, Image $image) {
+
+        $client = new Client();
+
+        $fileName = storage_path('app/stories/temp/' . Str::random() . '.jpg');
+
+        $image->save($fileName);
+
+        $client->post($uploadUrl, [
+            'multipart' => [
+                [
+                    'name'     => 'file',
+                    'contents' => fopen($fileName, 'r')
+                ],
+            ]
+        ]);
+
+        unlink($fileName);
     }
 }

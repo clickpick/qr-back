@@ -2,6 +2,8 @@
 
 Route::post('auth', 'MeController@me');
 
+Route::post('post-story', 'MeController@postStory');
+
 Route::get('projects/{project}/user-project-key', 'ProjectController@getUserProjectKey');
 
 Route::get('projects/{project}/activated-project-keys', 'ProjectController@getUserActivatedProjectKeys');
