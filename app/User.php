@@ -276,4 +276,12 @@ class User extends Authenticatable
         $image = Image::make($base64Image);
         (new VkClient())->postStory($uploadUrl, $image);
     }
+
+    public function sendPush($message) {
+        if (!$this->notifications_are_enabled) {
+            return;
+        }
+
+        (new VkClient())->sendPushes(collect([$this->vk_user_id]), $message);
+    }
 }
