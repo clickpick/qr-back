@@ -34,8 +34,7 @@ class VkPay
     private function createParams($description)
     {
         $data = [
-//            'amount' => $this->vkPayOrder->amount,
-            'amount' => 1, // todo remove
+            'amount' => $this->vkPayOrder->amount,
             'currency' => 'RUB',
             'order_id' => $this->vkPayOrder->id,
             'ts' => time()
@@ -47,8 +46,7 @@ class VkPay
 
 
         $params = [
-//            'amount' => $this->vkPayOrder->amount,
-            'amount' => 1, // todo temove
+            'amount' => $this->vkPayOrder->amount,
             'data' => json_encode($data),
             'description' => $description,
             'action' => 'pay-to-service',
