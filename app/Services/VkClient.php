@@ -17,7 +17,7 @@ class VkClient {
 
     public function __construct()
     {
-        $this->client = new VKApiClient(self::API_VERSION);
+        $this->client = new VKApiClient(self::API_VERSION, 'ru');
         $this->accessToken = config('services.vk.app.service');
     }
 
