@@ -71,6 +71,9 @@ class Project extends Model implements HasMedia
     public const DECLINE = 2;
 
 
+    const MAX_PERCENT = 10000;
+
+
     const KEYS_COUNT = 5;
 
     protected $fillable = [
@@ -122,20 +125,20 @@ class Project extends Model implements HasMedia
 
     public function generateProjectKeys($count = self::KEYS_COUNT)
     {
-        $minRate = 2;
+        $minRate = 1;
         $rate = $minRate;
         $sum = 0;
 
         for ($i = 0; $i < $count; $i++) {
 
             if ($i > 0 && $i < $count - 1) {
-                $maxRate = 100 - $sum - $minRate * ($count - $i);
+                $maxRate = self::MAX_PERCENT - $sum - $minRate * ($count - $i);
 
                 $rate = rand($minRate, $maxRate);
             }
 
             if ($i === $count - 1) {
-                $rate = 100 - $sum;
+                $rate = self::MAX_PERCENT - $sum;
             }
 
             $this->projectKeys()->create([
@@ -152,7 +155,7 @@ class Project extends Model implements HasMedia
     public function getRandomProjectKey()
     {
         $dispersion = $this->projectKeys->reduce(function ($carry, ProjectKey $projectKey) {
-            return array_merge($carry, array_fill(1, $projectKey->drop_rate * 100, $projectKey->id));
+            return array_merge($carry, array_fill(1, $projectKey->drop_rate, $projectKey->id));
         }, []);
 
 
