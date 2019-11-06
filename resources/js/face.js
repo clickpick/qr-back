@@ -45,8 +45,9 @@ function init(){
       const items = data.data;
 
       for (let i = 0, l = items.length; i < l; i++) {
-        console.log(items[i].coords.coordinates);
-        yellowCollection.add(new window.ymaps.Placemark([items[i].coords.coordinates[1], items[i].coords.coordinates[0]], {iconContent: items[i].value}));
+        if (items[i].coords) {
+          yellowCollection.add(new window.ymaps.Placemark([items[i].coords.coordinates[1], items[i].coords.coordinates[0]], {iconContent: items[i].value}));
+        }
       }
 
       myMap.geoObjects.add(yellowCollection).add(yellowCollection);
