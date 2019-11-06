@@ -71,6 +71,11 @@ class City extends Model
     }
 
     public function fillCoords() {
+
+        if (!$this->title) {
+            return;
+        }
+
         $cities = app('geocoder')->geocode($this->title)->get();
 
         if ($cities->count() === 0) {
