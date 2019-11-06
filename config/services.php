@@ -48,6 +48,12 @@ return [
             'merchant_id' => env('VK_MERCHANT_ID'),
             'secret' => env('VK_MERCHANT_SECRET')
         ]
+    ],
+
+    'yandex' => [
+        'maps' => [
+            'key' => env('YANDEX_MAPS_API_KEY')
+        ]
     ]
 
 ];

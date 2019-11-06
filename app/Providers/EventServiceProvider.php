@@ -2,12 +2,16 @@
 
 namespace App\Providers;
 
+use App\Events\CityCoordsFilled;
+use App\Events\CityCreated;
 use App\Events\ProjectCreated;
 use App\Events\ProjectHasFinished;
 use App\Events\ProjectKeyActivated;
 use App\Events\UserCreated;
 use App\Listeners\CheckAvailableCheats;
 use App\Listeners\CheckProjectIsFinished;
+use App\Listeners\FillCityCoords;
+use App\Listeners\FillLastPositionForUsers;
 use App\Listeners\FillPersonalDataFromVk;
 use App\Listeners\GenerateSymbolsForProject;
 use App\Listeners\SendProjectFinishedNotifications;
@@ -40,6 +44,14 @@ class EventServiceProvider extends ServiceProvider
 
         ProjectHasFinished::class => [
             SendProjectFinishedNotifications::class
+        ],
+
+        CityCreated::class => [
+            FillCityCoords::class
+        ],
+
+        CityCoordsFilled::class => [
+            FillLastPositionForUsers::class
         ]
     ];
 

@@ -15,6 +15,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Phaza\LaravelPostgis\Eloquent\PostgisTrait;
 use Spatie\Regex\Regex;
 use Intervention\Image\Facades\Image;
 
@@ -63,10 +64,15 @@ use Intervention\Image\Facades\Image;
  * @property-read int|null $vk_pay_orders_count
  * @property-read Collection|AvailableCheat[] $availableCheats
  * @property-read int|null $available_cheats_count
+ * @property int|null $city_id
+ * @property string|null $last_position
+ * @method static Builder|User whereCityId($value)
+ * @method static Builder|User whereLastPosition($value)
+ * @property-read City|null $city
  */
 class User extends Authenticatable
 {
-    use Notifiable;
+    use Notifiable, PostgisTrait;
 
     /**
      * The attributes that are mass assignable.
@@ -78,7 +84,9 @@ class User extends Authenticatable
         'utc_offset',
         'notifications_are_enabled',
         'messages_are_enabled',
-        'visited_at'
+        'visited_at',
+        'city_id',
+        'last_position'
     ];
 
     protected $dispatchesEvents = [
@@ -103,6 +111,17 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
+    protected $postgisFields = [
+        'last_position',
+    ];
+
+    protected $postgisTypes = [
+        'last_position' => [
+            'geomtype' => 'geography',
+            'srid' => 4326
+        ]
+    ];
+
     public function projectKeys()
     {
         return $this->belongsToMany(ProjectKey::class)->withPivot('token');
@@ -123,16 +142,41 @@ class User extends Authenticatable
         return $this->hasMany(AvailableCheat::class);
     }
 
+    public function city() {
+        return $this->belongsTo(City::class);
+    }
+
+
+    public function attachCity($cityId) {
+        $city = City::whereId($cityId)->first();
+
+        if (!$city) {
+            $city = City::createFromVk($cityId);
+        }
+
+        if (!$city) {
+            return;
+        }
+
+        $this->city_id = $city->id;
+
+        if ($city->center) {
+            $this->last_position = $city->center;
+        }
+    }
 
     public function fillPersonalInfoFromVk($data = null)
     {
-        $data = $data ?? (new VkClient())->getUsers($this->vk_user_id, ['first_name', 'last_name', 'photo_200', 'timezone', 'sex', 'bdate']);
+        $data = $data ?? (new VkClient())->getUsers($this->vk_user_id, ['first_name', 'last_name', 'photo_200', 'timezone', 'sex', 'bdate', 'city']);
 
         $this->first_name = $data['first_name'] ?? null;
         $this->last_name = $data['last_name'] ?? null;
         $this->avatar_200 = $data['photo_200'] ?? null;
         $this->sex = $data['sex'] ?? 0;
 
+        if (isset($data['city']) && $data['city']) {
+            $this->attachCity($data['city']['id']);
+        }
 
         if (isset($data['bdate'])) {
             $reYear = Regex::match('/\d{1,2}.\d{1,2}.\d{4}/', $data['bdate']);

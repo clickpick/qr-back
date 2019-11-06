@@ -29,6 +29,8 @@ use Illuminate\Support\Carbon;
  * @property float $drop_rate
  * @property-read \App\Project $project
  * @method static \Illuminate\Database\Eloquent\Builder|\App\ProjectKey whereDropRate($value)
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\User[] $users
+ * @property-read int|null $users_count
  */
 class ProjectKey extends Model
 {

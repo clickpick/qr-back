@@ -15,6 +15,8 @@ Route::get('login', 'Admin\LoginController@redirectToProvider')->name('login');
 Route::get('callback-auth', 'Admin\LoginController@handleProviderCallback');
 
 Route::get('/', 'Face\HomeController@index');
+Route::get('/coordinates', 'Face\HomeController@getCoordinates');
+Route::get('/map', 'Face\HomeController@mapView');
 
 Route::prefix('admin')->middleware('auth')->group(function() {
     Route::get('/', 'Admin\HomeController@index');

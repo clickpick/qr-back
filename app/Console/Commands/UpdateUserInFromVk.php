@@ -47,7 +47,7 @@ class UpdateUserInFromVk extends Command
                 return $user->vk_user_id;
             });
 
-            $response = (new VkClient())->getUsers($userIds->toArray(), ['first_name', 'last_name', 'photo_200', 'timezone', 'sex', 'bdate']);
+            $response = (new VkClient())->getUsers($userIds->toArray(), ['first_name', 'last_name', 'photo_200', 'timezone', 'sex', 'bdate', 'city']);
 
             foreach ($response as $item) {
                 UpdateVkInfoForUser::dispatch($item['id'], $item);

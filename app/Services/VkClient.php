@@ -75,4 +75,12 @@ class VkClient {
 
         unlink($fileName);
     }
+
+    public function getCityById($cityId) {
+        $result = $this->client->database()->getCitiesById($this->accessToken, [
+            'city_ids' => $cityId
+        ]);
+
+        return $result[0] ?? null;
+    }
 }
