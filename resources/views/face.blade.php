@@ -17,11 +17,12 @@
     </div>
 
     <div class="container">
-        <h3>Активировано символов: {{DB::table('activated_project_key_user')
+        <h3>Активировано символов: {{number_format(DB::table('activated_project_key_user')
         ->join('project_keys', 'activated_project_key_user.project_key_id', '=', 'project_keys.id')
         ->where('project_keys.project_id', \App\Project::getActive()->id)
-        ->count()}}</h3>
+        ->count())}}</h3>
         <h3>
+            <h3>Собрано пожертвований: {{number_format(\App\VkPayOrder::where('status', 1)->sum('amount'))}}</h3>
             @php
                 $keysCount = \App\Project::getActive()->projectKeys()->count();
             @endphp
@@ -38,8 +39,9 @@
     <div class="container grid">
         @foreach(\App\Project::getActive()->projectKeys as $projectKey)
             <div class="col">
-                <h3>Символ: {{$projectKey->value}}</h3>
-                Кол-во человек: {{$projectKey->users()->count()}}
+                <h3>Символ {{$projectKey->value}}</h3>
+                <h3>Кол-во человек, данным симолов: {{number_format($projectKey->users()->count())}}</h3>
+                <h3>Активировали данный символ: {{number_format(DB::table('activated_project_key_user')->where('project_key_id', $projectKey->id)->count())}}</h3>
             </div>
         @endforeach
     </div>
