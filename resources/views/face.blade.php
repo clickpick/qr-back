@@ -17,6 +17,7 @@
     </div>
 
     <div class="container">
+        <h2>Кол-во пользователей: {{\App\User::count()}}</h2>
         <h3>Активировано символов: {{number_format(DB::table('activated_project_key_user')
         ->join('project_keys', 'activated_project_key_user.project_key_id', '=', 'project_keys.id')
         ->where('project_keys.project_id', \App\Project::getActive()->id)
