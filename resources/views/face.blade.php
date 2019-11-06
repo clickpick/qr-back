@@ -31,7 +31,7 @@
             ->having(DB::raw('count(activated_project_key_user.id)'), '>=', $keysCount)
             ->groupBy('activated_project_key_user.user_id')
             ->select(DB::raw('count(activated_project_key_user.id) as count'))
-            ->get()->count()}} / {{$keysCount}}</h3>
+            ->get()->count()}} / {{\App\Project::getActive()->winners_count}}</h3>
         </h3>
     </div>
 
