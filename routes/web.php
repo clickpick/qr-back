@@ -14,6 +14,8 @@
 Route::get('login', 'Admin\LoginController@redirectToProvider')->name('login');
 Route::get('callback-auth', 'Admin\LoginController@handleProviderCallback');
 
+Route::get('/', 'Face\HomeController@index');
+
 Route::prefix('admin')->middleware('auth')->group(function() {
     Route::get('/', 'Admin\HomeController@index');
 
@@ -24,7 +26,3 @@ Route::prefix('admin')->middleware('auth')->group(function() {
 });
 
 Route::post('request-funding', 'Admin\ProjectController@store');
-
-Route::get('/', function () {
-    return redirect('admin/');
-});

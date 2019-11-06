@@ -1,0 +1,47 @@
+@import url("../../node_modules/normalize.css/normalize.css");
+
+.wrapper {
+    position: relative;
+    min-height: 100vh;
+    background-color: #000;
+    color: #fff;
+    overflow: hidden;
+
+    &-bg {
+        background-size: cover;
+
+        position: absolute;
+        top: -10%;
+        left: -10%;
+        right: -10%;
+        bottom: -10%;
+
+        opacity: .3;
+
+        filter: blur(25px);
+    }
+
+    h1 {
+        position: relative;
+        margin: 50px auto;
+        text-align: center;
+    }
+}
+
+.container {
+    position: relative;
+
+    max-width: 1440px;
+    width: 95%;
+    margin: 0 auto;
+}
+
+.grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+
+    .col {
+        margin: 30px;
+    }
+}

@@ -237,4 +237,9 @@ class Project extends Model implements HasMedia
         $this->raised_funds += $value;
         $this->save();
     }
+
+
+    public static function getActive() {
+        return self::whereIsActive(true)->first();
+    }
 }
