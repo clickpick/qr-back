@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\User;
 use Laravel\Telescope\Telescope;
 use Illuminate\Support\Facades\Gate;
 use Laravel\Telescope\IncomingEntry;
@@ -21,6 +22,9 @@ class TelescopeServiceProvider extends TelescopeApplicationServiceProvider
         $this->hideSensitiveRequestDetails();
 
         Telescope::filter(function (IncomingEntry $entry) {
+
+            return true;
+
             if ($this->app->isLocal()) {
                 return true;
             }
@@ -63,8 +67,8 @@ class TelescopeServiceProvider extends TelescopeApplicationServiceProvider
      */
     protected function gate()
     {
-        Gate::define('viewTelescope', function ($user) {
-            return true;
+        Gate::define('viewTelescope', function (User $user) {
+            return $user->is_admin;
         });
     }
 }
