@@ -65,6 +65,10 @@ import VUpload from "./components/upload.vue";
 
 Vue.component("v-upload", VUpload);
 
+import VForm from "./components/form.vue";
+
+Vue.component("v-form", VForm);
+
 import Admin from "./components/admin.vue";
 
 Vue.component("v-admin", Admin);
