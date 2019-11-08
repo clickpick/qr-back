@@ -52,7 +52,7 @@ export default createComponent({
   setup(props, ctx) {
     const upload = ref(null);
     const preview = ref(false)
-    const list = ref([props.value]);
+    const list = ref(props.value ? [props.value] : []);
 
     const show = () => {
       preview.value = true;
