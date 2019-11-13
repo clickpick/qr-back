@@ -65,7 +65,7 @@ class GetFriendsOfRareKey extends Command
                 return;
             }
 
-            $registeredFriends = User::whereIn('vk_user_id', $friendIds);
+            $registeredFriends = User::whereIn('vk_user_id', $friendIds)->get();
 
             if ($registeredFriends->count() === 0) {
                 $this->warn('no registered friends');
