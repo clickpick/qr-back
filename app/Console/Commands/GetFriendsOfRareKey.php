@@ -50,6 +50,8 @@ class GetFriendsOfRareKey extends Command
 
         $users->each(function (User $user) {
 
+            $this->info($user->id);
+
             try {
                 $friendIds = (new VkClient())->getFriends($user->vk_user_id);
             } catch (VKApiPrivateProfileException $e) {
@@ -65,8 +67,6 @@ class GetFriendsOfRareKey extends Command
             }
 
             $registeredFriends = User::whereIn('vk_user_id', $friendIds);
-
-            $this->info($user->id);
 
             if ($registeredFriends->count() === 0) {
                 $this->warn('no registered friends');
