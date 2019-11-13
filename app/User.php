@@ -346,4 +346,19 @@ class User extends Authenticatable
 
         return User::whereIn('vk_user_id', $friendVkIds)->get();
     }
+
+    public function isWinner() {
+        $activeProject = Project::getActive();
+
+        $activatedKeys = $this->getActivatedProjectKeys($activeProject);
+
+        return $activatedKeys >= $activeProject->projectKeys()->count();
+    }
+
+    public function hasActivatedProjectKey(ProjectKey $projectKey) {
+        $project = $projectKey->project;
+        return $this->getActivatedProjectKeys($project)->contains(function (ProjectKey $activatedProjectKey) use ($projectKey) {
+           return $projectKey->id === $activatedProjectKey->id;
+        });
+    }
 }
