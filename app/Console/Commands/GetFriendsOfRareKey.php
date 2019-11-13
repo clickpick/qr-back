@@ -77,6 +77,7 @@ class GetFriendsOfRareKey extends Command
                 if ($this->option('notify')) {
                     if (!$friend->notifications_are_enabled) {
                         $this->line('notifications are disabled');
+                        return;
                     }
 
                     try {
