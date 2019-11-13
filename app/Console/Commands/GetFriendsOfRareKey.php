@@ -15,7 +15,7 @@ class GetFriendsOfRareKey extends Command
      *
      * @var string
      */
-    protected $signature = 'project_key:friends {projectKeyId}';
+    protected $signature = 'project_key:friends {projectKeyId} {--notify}';
 
     /**
      * The console command description.
@@ -47,7 +47,6 @@ class GetFriendsOfRareKey extends Command
         $users = $projectKey->users;
 
 
-
         $users->each(function (User $user) {
 
             $this->info($user->id);
@@ -57,7 +56,7 @@ class GetFriendsOfRareKey extends Command
             } catch (VKApiPrivateProfileException $e) {
                 $this->warn('private profile');
                 return;
-            } catch(\Exception $e) {
+            } catch (\Exception $e) {
                 $this->warn('api error');
                 return;
             }
@@ -73,7 +72,21 @@ class GetFriendsOfRareKey extends Command
             }
 
             $registeredFriends->each(function (User $friend) {
-               $this->warn($friend->id);
+                $this->warn($friend->id);
+
+                if ($this->option('notify')) {
+                    if (!$friend->notifications_are_enabled) {
+                        $this->line('notifications are disabled');
+                    }
+
+                    try {
+                        $friend->sendPush('По секрету, у твоего друга есть ТОТ САМЫЙ код! Поторопись, ты еще можешь выиграть приз!');
+                    } catch (\Exception $e) {
+                        $this->line('api push error');
+                        return;
+                    }
+                    $this->line('notified');
+                }
             });
         });
     }
