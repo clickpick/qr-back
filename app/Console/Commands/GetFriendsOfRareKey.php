@@ -6,6 +6,7 @@ use App\ProjectKey;
 use App\Services\VkClient;
 use App\User;
 use Illuminate\Console\Command;
+use VK\Exceptions\Api\VKApiPrivateProfileException;
 
 class GetFriendsOfRareKey extends Command
 {
@@ -49,7 +50,16 @@ class GetFriendsOfRareKey extends Command
 
         $users->each(function (User $user) {
 
-            $friendIds = (new VkClient())->getFriends($user->vk_user_id);
+            try {
+                $friendIds = (new VkClient())->getFriends($user->vk_user_id);
+            } catch (VKApiPrivateProfileException $e) {
+                $this->warn('private profile');
+                return;
+            } catch(\Exception $e) {
+                $this->warn('api error');
+                return;
+            }
+
             if (empty($friendIds)) {
                 return;
             }
@@ -63,7 +73,7 @@ class GetFriendsOfRareKey extends Command
             }
 
             $registeredFriends->each(function (User $friend) {
-               $this->line($friend->id);
+               $this->warn($friend->id);
             });
         });
     }
