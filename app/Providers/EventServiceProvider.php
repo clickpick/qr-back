@@ -7,6 +7,7 @@ use App\Events\CityCreated;
 use App\Events\ProjectCreated;
 use App\Events\ProjectHasFinished;
 use App\Events\ProjectKeyActivated;
+use App\Events\ProjectKeyAttachedToUser;
 use App\Events\UserCreated;
 use App\Listeners\CheckAvailableCheats;
 use App\Listeners\CheckProjectIsFinished;
@@ -14,6 +15,7 @@ use App\Listeners\FillCityCoords;
 use App\Listeners\FillLastPositionForUsers;
 use App\Listeners\FillPersonalDataFromVk;
 use App\Listeners\GenerateSymbolsForProject;
+use App\Listeners\NotifyAboutRareProjectKey;
 use App\Listeners\SendProjectFinishedNotifications;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 use SocialiteProviders\Manager\SocialiteWasCalled;
@@ -52,6 +54,10 @@ class EventServiceProvider extends ServiceProvider
 
         CityCoordsFilled::class => [
             FillLastPositionForUsers::class
+        ],
+
+        ProjectKeyAttachedToUser::class => [
+            NotifyAboutRareProjectKey::class
         ]
     ];
 

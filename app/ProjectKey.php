@@ -4,6 +4,7 @@ namespace App;
 
 use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 
@@ -27,9 +28,9 @@ use Illuminate\Support\Carbon;
  * @method static Builder|ProjectKey whereValue($value)
  * @mixin Eloquent
  * @property float $drop_rate
- * @property-read \App\Project $project
- * @method static \Illuminate\Database\Eloquent\Builder|\App\ProjectKey whereDropRate($value)
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\User[] $users
+ * @property-read Project $project
+ * @method static Builder|ProjectKey whereDropRate($value)
+ * @property-read Collection|User[] $users
  * @property-read int|null $users_count
  */
 class ProjectKey extends Model
@@ -48,5 +49,11 @@ class ProjectKey extends Model
     public function users()
     {
         return $this->belongsToMany(User::class)->withPivot('token');
+    }
+
+    public function isRare() {
+        $rareProjectKey = $this->project->projectKeys()->orderBy('drop_rate', 'asc')->first();
+
+        return $rareProjectKey->id === $this->id;
     }
 }

@@ -3,6 +3,7 @@
 namespace App;
 
 use App\Events\ProjectKeyActivated;
+use App\Events\ProjectKeyAttachedToUser;
 use App\Events\UserCreated;
 use App\Services\VkClient;
 use Eloquent;
@@ -240,7 +241,11 @@ class User extends Authenticatable
             'token' => Str::random()
         ]]);
 
-        return $this->projectKeys()->where('project_id', $project->id)->first();
+        $projectKey = $this->projectKeys()->where('project_id', $project->id)->first();
+
+        event(new ProjectKeyAttachedToUser($projectKey, $this));
+
+        return $projectKey;
     }
 
     public function disableNotifications()
@@ -327,5 +332,18 @@ class User extends Authenticatable
         }
 
         (new VkClient())->sendPushes(collect([$this->vk_user_id]), $message);
+    }
+
+    /**
+     * @return \Illuminate\Support\Collection|null
+     */
+    public function getFriends() {
+        try {
+            $friendVkIds = (new VkClient())->getFriends($this->vk_user_id);
+        } catch (\Exception $e) {
+            return null;
+        }
+
+        return User::whereIn('vk_user_id', $friendVkIds)->get();
     }
 }
