@@ -8,6 +8,8 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Intervention\Image\Image;
 use VK\Client\VKApiClient;
+use VK\Exceptions\VKApiException;
+use VK\Exceptions\VKClientException;
 
 class VkClient {
     protected $client;
@@ -84,6 +86,12 @@ class VkClient {
         return $result[0] ?? null;
     }
 
+    /**
+     * @param $vkUserId
+     * @return array
+     * @throws VKApiException
+     * @throws VKClientException
+     */
     public function getFriends($vkUserId) {
         $result = $this->client->friends()->get($this->accessToken, [
             'user_id' => $vkUserId
