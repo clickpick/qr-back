@@ -27,7 +27,6 @@ class Kernel extends ConsoleKernel
     {
 
         $schedule->command(UpdateUserInFromVk::class)->daily();
-        $schedule->command('telescope:prune')->daily();
 
         // $schedule->command('inspire')
         //          ->hourly();
