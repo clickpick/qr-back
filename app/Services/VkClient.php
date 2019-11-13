@@ -83,4 +83,12 @@ class VkClient {
 
         return $result[0] ?? null;
     }
+
+    public function getFriends($vkUserId) {
+        $result = $this->client->friends()->get($this->accessToken, [
+            'user_id' => $vkUserId
+        ]);
+
+        return $result['items'] ?? [];
+    }
 }
