@@ -45,7 +45,16 @@ class NotifyAboutRareProjectKey implements ShouldQueue
             return;
         }
 
-        $friends->each(function (User $user) {
+        $friends->each(function (User $user) use ($projectKey) {
+
+            if ($user->isWinner()) {
+                return;
+            }
+
+            if ($user->hasActivatedProjectKey($projectKey)) {
+                return;
+            }
+
             $user->sendPush('У твоего друга только что появился секретный код! Поторопись, найди его быстрее других!');
         });
     }
