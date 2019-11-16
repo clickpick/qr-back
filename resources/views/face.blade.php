@@ -14,7 +14,7 @@
                 <h1>{{\App\Project::getActive()->name}}</h1>
             </div>
             <div class="container">
-                <h2>Кол-во пользователей: {{\App\User::count()}}</h2>
+                <h2>Кол-во пользователей: {{number_format(\App\User::count())}}</h2>
                 <h3>Активировано символов: {{number_format(DB::table('activated_project_key_user')
                 ->join('project_keys', 'activated_project_key_user.project_key_id', '=', 'project_keys.id')
                 ->where('project_keys.project_id', \App\Project::getActive()->id)
@@ -37,7 +37,7 @@
                 @foreach(\App\Project::getActive()->projectKeys as $projectKey)
                     <div class="col">
                         <h3>Символ {{$projectKey->value}}</h3>
-                        <h3>Кол-во человек, данным симолов: {{number_format($projectKey->users()->count())}}</h3>
+                        <h3>Кол-во человек, у которых данный симолов: {{number_format($projectKey->users()->count())}}</h3>
                         <h3>Активировали данный символ: {{number_format(DB::table('activated_project_key_user')->where('project_key_id', $projectKey->id)->count())}}</h3>
                     </div>
                 @endforeach
