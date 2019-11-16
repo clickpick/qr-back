@@ -352,7 +352,7 @@ class User extends Authenticatable
 
         $activatedKeys = $this->getActivatedProjectKeys($activeProject);
 
-        return $activatedKeys >= $activeProject->projectKeys()->count();
+        return $activatedKeys->count() >= $activeProject->projectKeys()->count();
     }
 
     public function hasActivatedProjectKey(ProjectKey $projectKey) {
