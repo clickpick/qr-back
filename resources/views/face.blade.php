@@ -34,7 +34,7 @@
                 </h3>
             </div>
             <div class="container grid">
-                @foreach(\App\Project::getActive()->projectKeys as $projectKey)
+                @foreach(\App\Project::getActive()->projectKeys()->orderBy('order')->get() as $projectKey)
                     <div class="col">
                         <h3>Символ {{$projectKey->value}}</h3>
                         <h3>Кол-во человек, у которых данный симолов: {{number_format($projectKey->users()->count())}}</h3>
