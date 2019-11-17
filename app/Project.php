@@ -239,7 +239,30 @@ class Project extends Model implements HasMedia
     }
 
 
-    public static function getActive() {
+    public static function getActive()
+    {
         return self::whereIsActive(true)->first();
+    }
+
+    public function getWinners()
+    {
+        $r = DB::table('activated_project_key_user')
+            ->join('project_keys', 'activated_project_key_user.project_key_id', '=', 'project_keys.id')
+            ->where('project_keys.project_id', $this->id)
+            ->having(DB::raw('count(activated_project_key_user.id)'), '>=', $this->projectKeys()->count())
+            ->groupBy('activated_project_key_user.user_id')
+            ->select(DB::raw('count(activated_project_key_user.id) as count, max(activated_project_key_user.user_id) as user_id'))
+            ->orderBy(DB::raw('max(activated_project_key_user.id)'))
+            ->get();
+
+        $users = User::whereIn('id', $r->pluck('user_id'))->get()->mapWithKeys(function(User $user) {
+            return [
+                $user->id => $user
+            ];
+        });
+
+        return $r->map(function($item) use ($users) {
+           return $users->get($item['user_id']);
+        });
     }
 }
