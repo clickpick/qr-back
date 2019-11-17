@@ -255,14 +255,14 @@ class Project extends Model implements HasMedia
             ->orderBy(DB::raw('max(activated_project_key_user.id)'))
             ->get();
 
-        $users = User::whereIn('id', $r->pluck('user_id'))->get()->mapWithKeys(function(User $user) {
+        $users = User::whereIn('id', $r->pluck('user_id'))->get()->mapWithKeys(function (User $user) {
             return [
                 $user->id => $user
             ];
         });
 
-        return $r->map(function($item) use ($users) {
-           return $users->get($item['user_id']);
+        return $r->map(function ($item) use ($users) {
+            return $users->get($item->user_id);
         });
     }
 }
