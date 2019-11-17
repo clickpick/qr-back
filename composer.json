@@ -22,11 +22,14 @@
         "laravel/tinker": "^1.0",
         "phaza/laravel-postgis": "^4.0",
         "predis/predis": "^1.1",
+        "slim/psr7": "^0.6.0",
+        "slim/slim": "^4.3",
         "socialiteproviders/vkontakte": "^4.0",
         "spatie/laravel-medialibrary": "^7.0.0",
         "spatie/regex": "^1.4",
         "toin0u/geocoder-laravel": "^4.2",
-        "vkcom/vk-php-sdk": "^5.101"
+        "vkcom/vk-php-sdk": "^5.101",
+        "zendframework/zend-diactoros": "^2.2"
     },
     "require-dev": {
         "barryvdh/laravel-ide-helper": "^2.6",
