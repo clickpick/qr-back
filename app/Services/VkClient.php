@@ -39,10 +39,15 @@ class VkClient {
 
         $ids->chunk(100)->each(function(Collection $chunkedIds) use ($message) {
 
-            $result = $this->client->notifications()->sendMessage($this->accessToken, [
-                'user_ids' => $chunkedIds->implode(','),
-                'message' => $message
-            ]);
+            try {
+                $result = $this->client->notifications()->sendMessage($this->accessToken, [
+                    'user_ids' => $chunkedIds->implode(','),
+                    'message' => $message
+                ]);
+            } catch (\Exception $e) {
+                return;
+            }
+
 
             collect($result)->filter(function ($item) {
                 return !$item['status'];
