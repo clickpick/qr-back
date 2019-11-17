@@ -78,6 +78,10 @@ export default createComponent({
     const model = ref(props.value);
     const statuses = ref(createStatusEnum());
 
+    watch(() => props.value, (value) => {
+      model.value = value;
+    });
+
     watch(model, (model) => {
       ctx.emit("change", model)
     });
