@@ -2,22 +2,23 @@
 
 namespace App\Http\Controllers;
 
-use App\Events\ProjectKeyActivated;
 use App\Http\Requests\ActivateProjectKeyRequest;
-use App\Http\Requests\AddFundsRequest;
 use App\Http\Resources\ProjectFactResource;
 use App\Http\Resources\ProjectKeyResource;
 use App\Http\Resources\ProjectKeyTokenResource;
 use App\Http\Resources\ProjectResource;
+use App\Http\Resources\UserResource;
 use App\Project;
 use App\ProjectKey;
-use Illuminate\Http\Request;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
 class ProjectController extends Controller
 {
-    public function getActive() {
+    public function getActive()
+    {
         $project = Project::whereIsActive(true)->firstOrFail();
 
         $project->load('projectFacts');
@@ -25,13 +26,15 @@ class ProjectController extends Controller
         return new ProjectResource($project);
     }
 
-    public function getUserProjectKey(Project $project) {
+    public function getUserProjectKey(Project $project)
+    {
         $user = Auth::user();
 
         return new ProjectKeyTokenResource($user->getProjectKeyForProject($project));
     }
 
-    public function activateProjectKey(ActivateProjectKeyRequest $request, Project $project) {
+    public function activateProjectKey(ActivateProjectKeyRequest $request, Project $project)
+    {
         $projectKeyIdToActivate = DB::table('project_key_user')
             ->where('project_keys.project_id', $project->id)
             ->where('project_key_user.token', $request->token)
@@ -77,7 +80,8 @@ class ProjectController extends Controller
         return new ProjectKeyResource($projectKey);
     }
 
-    public function getUserActivatedProjectKeys(Project $project) {
+    public function getUserActivatedProjectKeys(Project $project)
+    {
         $user = Auth::user();
 
         $activatedKeys = $user->getActivatedProjectKeys($project);
@@ -85,23 +89,24 @@ class ProjectController extends Controller
         return ProjectKeyResource::collection($activatedKeys);
     }
 
-    public function getFacts(Project $project) {
+    public function getFacts(Project $project)
+    {
         $facts = $project->projectFacts;
 
         return ProjectFactResource::collection($facts);
     }
 
-    /**
-     * TODO: remove after connecting pay-to-service, for demonstration only
-     *
-     * @param AddFundsRequest $request
-     * @param Project $project
-     *
-     * @return ProjectResource
-     */
-    public function addFunds(AddFundsRequest $request, Project $project) {
-        $project->addFunds($request->value);
+    public function getWinners(Project $project)
+    {
+        if (!$project->is_finished) {
+            abort(403);
+        }
 
-        return new ProjectResource($project);
+        $winners = Cache::remember('winners_' . $project->id, Carbon::now()->addMinutes(20), function() use ($project) {
+            return $project->getWinners();
+        });
+
+
+        return UserResource::collection($winners);
     }
 }
