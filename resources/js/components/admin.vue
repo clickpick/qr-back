@@ -52,11 +52,12 @@ import { ru } from "date-fns/locale"
 import { createComponent, ref, onBeforeMount } from "@vue/composition-api";
 import { default as createEmptyProject } from "../model/project";
 import { default as createStatusEnum } from "../model/status";
+import { parse as parseError } from "../model/error";
 
 export default createComponent({
   name: "v-admin",
   setup(props, ctx) {
-    const projects = ref(null);
+    const projects = ref([]);
     const loading = ref(false);
 
     const formatDate = (date) => {
@@ -66,7 +67,7 @@ export default createComponent({
     const load = () => {
       loading.value = true;
 
-      ctx.root.$axios.get("/admin/api/projects").then(({ data: { data } }) => {
+      ctx.root.$axios.get("/admin/api/projects").then(({ data: { data }}) => {
         loading.value = false;
 
         projects.value = data.map((project) => {
@@ -119,7 +120,11 @@ export default createComponent({
       const index = projects.value.findIndex((project) => {
         return project.id === current.value.id;
       });
-      projects.value.splice(index, 1, current.value);
+      if (index === -1) {
+        projects.value.unshift(current.value);
+      } else {
+        projects.value.splice(index, 1, current.value);
+      }
     };
 
     const erase = () => {
@@ -132,24 +137,42 @@ export default createComponent({
       dispatch();
 
       const model = Object.assign({}, current.value);
-      model.banner = model.banner.raw || null;
-      model.poster = model.poster.raw || null;
+      model.banner = model.banner && model.banner.raw || null;
+      model.poster = model.poster && model.poster.raw || null;
 
       const data = createFormData(Object.freeze(model));
-      data.append("_method", "PUT");
 
-      ctx.root.$axios.post(`/admin/api/projects/${model.id}`, data).then(() => {
+      let url = "/request-funding";
+      if (model.id) {
+        data.append("_method", "PUT");
+        url = `/admin/api/projects/${model.id}`;
+      }
+
+      ctx.root.$axios.post(url, data).then(() => {
         ctx.root.$notify({
           title: "Успешно",
           message: `Проект "${model.name}" сохранен`,
+          customClass: "v-notification",
           type: "success"
         });
       }).catch((e) => {
-        ctx.root.$notify({
-          title: "Ошибка",
-          message: `${e}`,
-          type: "error"
-        });
+        if (model.id) {
+          ctx.root.$confirm("Отменить изменения? Все проекты будут перезагружены.", "Произошла ошибка", {
+            confirmButtonText: "Да",
+            cancelButtonText: "Нет",
+            customClass: "v-notification",
+            type: "error"
+          }).then(() => {
+            load();
+          });
+        } else {
+          ctx.root.$notify({
+            title: "Ошибка",
+            message: parseError(e),
+            customClass: "v-notification",
+            type: "error"
+          });
+        }
       });
 
       modal.value = false;
@@ -170,12 +193,14 @@ export default createComponent({
           ctx.root.$notify({
             title: "Успешно",
             message: `Проект "${model.name}" удален`,
+            customClass: "v-notification",
             type: "success"
           });
         }).catch((e) => {
           ctx.root.$notify({
             title: "Ошибка",
-            message: `${e}`,
+            message: parseError(e),
+            customClass: "v-notification",
             type: "error"
           });
         });
@@ -212,12 +237,14 @@ export default createComponent({
           ctx.root.$notify({
             title: "Успешно",
             message: `Проект "${model.name}" активирован`,
+            customClass: "v-notification",
             type: "success"
           });
         }).catch((e) => {
           ctx.root.$notify({
             title: "Ошибка",
-            message: `${e}`,
+            message: parseError(e),
+            customClass: "v-notification",
             type: "error"
           });
         });
@@ -231,9 +258,10 @@ export default createComponent({
     const statuses = ref(createStatusEnum());
 
     const mapStatus = (project) => {
-      return statuses.value.find((status) => {
+      const status = statuses.value.find((status) => {
         return project.status === status.value;
-      }).label;
+      });
+      return (status || statuses.value[0]).label;
     };
 
     const middleware = ({ name }) => {
@@ -341,6 +369,14 @@ export default createComponent({
           background-color: #e8f5e9;
         }
       }
+    }
+  }
+}
+
+.v-notification {
+  .el-notification__content {
+    p {
+      white-space: pre-line;
     }
   }
 }
