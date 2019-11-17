@@ -43,6 +43,10 @@ class ProjectController extends Controller
             abort(404);
         }
 
+        if ($project->is_finished) {
+            abort(403);
+        }
+
         $user = Auth::user();
 
         if ($projectKeyIdToActivate->user_id === $user->id) {
