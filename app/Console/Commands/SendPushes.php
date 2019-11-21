@@ -14,7 +14,7 @@ class SendPushes extends Command
      *
      * @var string
      */
-    protected $signature = 'users:send_pushes {message}';
+    protected $signature = 'users:send_pushes {message} {--id=} {--hash=}';
 
     /**
      * The console command description.
@@ -41,10 +41,18 @@ class SendPushes extends Command
     public function handle()
     {
         $message = $this->argument('message');
+        $userId = $this->option('id');
+        $hash = $this->option('hash') ?? '';
 
-        User::where('notifications_are_enabled', true)->chunk(100, function(Collection $users) use ($message) {
-            (new VkClient())->sendPushes($users->pluck('vk_user_id'), $message);
-        });
+        if ($userId) {
+            $user = User::findOrFail($userId);
+
+            (new VkClient())->sendPushes(collect([$user->vk_user_id]), $message, $hash);
+        } else {
+            User::where('notifications_are_enabled', true)->chunk(100, function(Collection $users) use ($message, $hash) {
+                (new VkClient())->sendPushes($users->pluck('vk_user_id'), $message, $hash);
+            });
+        }
 
 
         $this->info('sent');

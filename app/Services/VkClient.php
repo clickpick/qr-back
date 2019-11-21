@@ -35,14 +35,15 @@ class VkClient {
         return $isFew ? $response : $response[0];
     }
 
-    public function sendPushes(Collection $ids, $message) {
+    public function sendPushes(Collection $ids, $message, $fragment = "") {
 
-        $ids->chunk(100)->each(function(Collection $chunkedIds) use ($message) {
+        $ids->chunk(100)->each(function(Collection $chunkedIds) use ($message, $fragment) {
 
             try {
                 $result = $this->client->notifications()->sendMessage($this->accessToken, [
                     'user_ids' => $chunkedIds->implode(','),
-                    'message' => $message
+                    'message' => $message,
+                    'fragment' => $fragment
                 ]);
             } catch (\Exception $e) {
                 return;
