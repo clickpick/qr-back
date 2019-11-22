@@ -26,7 +26,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
 
-        $schedule->command(UpdateUserInFromVk::class)->daily();
+        $schedule->command(UpdateUserInFromVk::class)->weekly();
 
         // $schedule->command('inspire')
         //          ->hourly();
