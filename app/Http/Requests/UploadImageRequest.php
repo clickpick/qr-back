@@ -7,7 +7,7 @@ use Illuminate\Foundation\Http\FormRequest;
 /**
  * Class UploadImageRequest
  * @package App\Http\Requests
- * @property $base64
+ * @property $image
  */
 class UploadImageRequest extends FormRequest
 {
@@ -29,7 +29,7 @@ class UploadImageRequest extends FormRequest
     public function rules()
     {
         return [
-            'base64' => 'required|string'
+            'image' => 'required|image'
         ];
     }
 }
