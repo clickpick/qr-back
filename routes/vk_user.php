@@ -22,3 +22,5 @@ Route::post('activate-cheat','AvailableCheatController@activateCheat');
 
 Route::post('request-funding', 'Admin\ProjectController@store');
 
+Route::post('temp-image', 'UploadImageController@temp');
+
