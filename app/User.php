@@ -305,12 +305,21 @@ class User extends Authenticatable
         return $this->availableCheats()
             ->where('project_id', $project->id)
             ->where('is_fired', false)
-            ->delete();
+            ->update([
+                'is_fired' => true
+            ]);
     }
 
-    public function getAvailableCheatForProject(Project $project) : AvailableCheat {
+    public function getAvailableCheatForProject(Project $project) {
         return $this->availableCheats()
             ->where('project_id', $project->id)
+            ->first();
+    }
+
+    public function getFiredCheatForProject(Project $project) {
+        return $this->availableCheats()
+            ->where('project_id', $project->id)
+            ->where('is_fired', true)
             ->first();
     }
 

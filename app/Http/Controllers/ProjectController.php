@@ -109,4 +109,16 @@ class ProjectController extends Controller
 
         return UserResource::collection($winners);
     }
+
+    public function getFiredCheat(Project $project) {
+        $user = Auth::user();
+
+        $pk = $user->getFiredCheatForProject($project);
+
+        if (!$pk) {
+            abort(404);
+        }
+
+        return new ProjectKeyResource($pk);
+    }
 }

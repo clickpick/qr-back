@@ -10,6 +10,7 @@ Route::get('projects/{project}/activated-project-keys', 'ProjectController@getUs
 Route::post('projects/{project}/activate-project-key', 'ProjectController@activateProjectKey');
 Route::get('projects/{project}/project-facts', 'ProjectController@getFacts');
 Route::get('projects/{project}/winners', 'ProjectController@getWinners');
+Route::get('projects/{project}/fired-cheat', 'ProjectController@getFiredCheat');
 
 Route::get('active-project', 'ProjectController@getActive');
 
@@ -18,7 +19,7 @@ Route::post('notifications', 'MeController@setNotificationsAreEnabled');
 Route::post('vk-pay-order', 'VkPayController@makeOrder');
 Route::post('vk-pay-cheat-order', 'VkPayController@makeCheatOrder');
 
-Route::post('activate-cheat','AvailableCheatController@activateCheat');
+//Route::post('activate-cheat','AvailableCheatController@activateCheat');
 
 Route::post('request-funding', 'Admin\ProjectController@store');
 

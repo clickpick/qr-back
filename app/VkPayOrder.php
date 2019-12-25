@@ -6,6 +6,7 @@ use Eloquent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 
@@ -108,15 +109,22 @@ class VkPayOrder extends Model
             return;
         }
 
-        $status = $this->convertStatus($status);
 
-        if ($status === self::CREATED) {
-            return;
-        }
+        DB::transaction(function() use ($status, $payload) {
+            $status = $this->convertStatus($status);
 
-        $this->status = $status;
-        $this->payload = $payload;
+            if ($status === self::CREATED) {
+                return;
+            }
 
-        $this->save();
+            $this->status = $status;
+            $this->payload = $payload;
+
+            $this->save();
+
+            if ($this->availableCheat && !$this->availableCheat->is_fired) {
+                $this->availableCheat->activate();
+            }
+        });
     }
 }

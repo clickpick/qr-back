@@ -31,6 +31,8 @@ use Illuminate\Support\Facades\DB;
  * @method static Builder|AvailableCheat whereVkPayOrderId($value)
  * @property-read User $user
  * @property-read Project $project
+ * @property int|null $project_key_id
+ * @method static Builder|AvailableCheat whereProjectKeyId($value)
  */
 class AvailableCheat extends Model
 {
@@ -64,6 +66,7 @@ class AvailableCheat extends Model
         DB::transaction(function() use ($projectKey) {
             $this->user->addProjectKey($projectKey);
 
+            $this->project_key_id = $projectKey->id;
             $this->is_fired = true;
             $this->save();
         });

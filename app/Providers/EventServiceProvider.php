@@ -45,7 +45,7 @@ class EventServiceProvider extends ServiceProvider
         ],
 
         ProjectHasFinished::class => [
-            SendProjectFinishedNotifications::class
+//            SendProjectFinishedNotifications::class
         ],
 
         CityCreated::class => [
