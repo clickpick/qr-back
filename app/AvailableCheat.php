@@ -50,6 +50,10 @@ class AvailableCheat extends Model
         return $this->belongsTo(Project::class);
     }
 
+    public function projectKey() {
+        return $this->belongsTo(ProjectKey::class);
+    }
+
     public function attachVkPayOrderId($vkPayOrderId)
     {
         $this->vk_pay_order_id = $vkPayOrderId;

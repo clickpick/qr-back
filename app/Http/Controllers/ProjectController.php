@@ -113,7 +113,13 @@ class ProjectController extends Controller
     public function getFiredCheat(Project $project) {
         $user = Auth::user();
 
-        $pk = $user->getFiredCheatForProject($project);
+        $cheat = $user->getFiredCheatForProject($project);
+
+        if (!$cheat) {
+            abort(404);
+        }
+
+        $pk = $cheat->projectKey;
 
         if (!$pk) {
             abort(404);
