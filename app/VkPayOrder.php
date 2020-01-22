@@ -46,7 +46,8 @@ class VkPayOrder extends Model
     const DONATE = 'donate';
     const CHEAT = 'cheat';
 
-    const CHEAT_VALUE = 50;
+    // todo 50 rub
+    const CHEAT_VALUE = 1;
 
     protected $fillable = [
         'amount',

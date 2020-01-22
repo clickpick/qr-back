@@ -35,7 +35,9 @@ class CheckAvailableCheats
 
         $userHasCheatForProject = $user->hasAvailableCheatForProject($project);
 
-        if ($userActivatedProjectKeys->count() > 2 && ($userActivatedProjectKeys->count() < $projectKeysCount - 1) && !$userHasCheatForProject) {
+        // todo uncomment
+//        if ($userActivatedProjectKeys->count() > 2 && ($userActivatedProjectKeys->count() < $projectKeysCount - 1) && !$userHasCheatForProject) {
+        if (true) {
             $user->addCheatForProject($project);
             return;
         }
