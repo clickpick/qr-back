@@ -50,7 +50,11 @@ class SendPushes extends Command
             (new VkClient())->sendPushes(collect([$user->vk_user_id]), $message, $hash);
         } else {
             User::where('notifications_are_enabled', true)->chunk(100, function(Collection $users) use ($message, $hash) {
-                (new VkClient())->sendPushes($users->pluck('vk_user_id'), $message, $hash);
+                try {
+                    (new VkClient())->sendPushes($users->pluck('vk_user_id'), $message, $hash);
+                } catch (\Exception $e) {
+                    $this->error($e->getMessage());
+                }
             });
         }
 
