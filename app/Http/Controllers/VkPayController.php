@@ -20,7 +20,7 @@ class VkPayController extends Controller
         $activeProject = Project::whereIsActive(true)->firstOrFail();
 
         return new VkPayParamsResource(
-            VkPay::makeOrder(Auth::user(), $request->amount, VkPayOrder::DONATE, $activeProject->name)
+            VkPay::makeOrder(Auth::user(), $request->amount, VkPayOrder::DONATE, 'wwf')
         );
     }
 
