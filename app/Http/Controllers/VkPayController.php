@@ -32,7 +32,7 @@ class VkPayController extends Controller
             abort(403, 'has no cheats');
         }
 
-        $params = VkPay::makeOrder(Auth::user(), VkPayOrder::CHEAT_VALUE, VkPayOrder::CHEAT, "{$activeProject->name}");
+        $params = VkPay::makeOrder(Auth::user(), VkPayOrder::CHEAT_VALUE, VkPayOrder::CHEAT, 'Чит');
 
         $availableCheat = Auth::user()->getAvailableCheatForProject($activeProject);
 
